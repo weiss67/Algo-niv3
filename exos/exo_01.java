@@ -57,13 +57,13 @@ public class exo_01 {
     public static int lastCity(int[] listCity) {
         return listCity[listCity.length - 1]; // Retourne la dernière valeur du tableau
     }
-
+    //function citySelectionned(prends en compte le tableau)
     public static void citiesAll(String[] table_cities) {
         for (int i = 0; i < table_cities.length; i++) {
             System.out.println(i + " - " + table_cities[i]); // Affiche chaque valeur du tableau
         }
     }
-
+    //function citySelectionned(index à selectionner, prends en compte le tableau)
     public static void citySelectionned(int selectionned, String[] table_welcomes) {
         if(selectionned < 4){
             System.out.println(table_welcomes[selectionned]);
