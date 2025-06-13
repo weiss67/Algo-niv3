@@ -53,7 +53,6 @@ Votre voyage est terminé :) !
 */
 import java.util.Scanner;
 public class exo_01 {
-
     public static int lastCity(int[] listCity) {
         return listCity[listCity.length - 1]; // Retourne la dernière valeur du tableau
     }
@@ -71,19 +70,23 @@ public class exo_01 {
     }
 
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in); // Déclaration du scanner Instance de l'Objet Scanner 
-        String v0 = "Paris", v1 = "Londres", v2 = "Madrid", v3 = "Lisbonne", v4 = "Berlin"; boolean relaunch = true;
-        String[] table_cities = {v0, v1, v2, v3, v4};
-        String[] table_welcomes = {"Bienvenue à Paris !", "Welcome to London !", "Bienvenido a Madrid !", "Bem-vindo a Lisboa !", "Willkommen in Berlin !"};
-        System.out.println("Bonjour, quelle ville voulez-vous visiter ?");
-        citiesAll(table_cities);
-        while(relaunch){
-            int selectionned = sc.nextInt();
-            citySelectionned(selectionned, table_welcomes);
-            System.out.println("Voulez-vous visiter une autre ville ? (false/true)");
-            relaunch = sc.nextBoolean();
+        try{
+            Scanner sc = new Scanner(System.in); // Déclaration du scanner Instance de l'Objet Scanner 
+            String v0 = "Paris", v1 = "Londres", v2 = "Madrid", v3 = "Lisbonne", v4 = "Berlin"; boolean relaunch = true;
+            String[] table_cities = {v0, v1, v2, v3, v4};
+            String[] table_welcomes = {"Bienvenue à Paris !", "Welcome to London !", "Bienvenido a Madrid !", "Bem-vindo a Lisboa !", "Willkommen in Berlin !"};
+            System.out.println("Bonjour, quelle ville voulez-vous visiter ?");
+            citiesAll(table_cities);
+            while(relaunch){
+                int selectionned = sc.nextInt();
+                citySelectionned(selectionned, table_welcomes);
+                System.out.println("Voulez-vous visiter une autre ville ? (false/true)");
+                relaunch = sc.nextBoolean();
+            }
+            System.out.println("Votre voyage est terminé :) !");
+            sc.close();
+        } catch (Exception e) {
+            System.out.println("ERROR FATAL 404");
         }
-        System.out.println("Votre voyage est terminé :) !");
-        sc.close();
     }
 }
