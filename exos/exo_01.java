@@ -1,4 +1,3 @@
-
 /*A l'aide de boucle, tableau, exception et fonction. 
 Me faire un tableau contenant 5 noms de ville (Vous pouvez choisir vos propres villes), 
 créer une méthode pour afficher les villes du tableau numéroté par ligne 
@@ -53,9 +52,6 @@ Votre voyage est terminé :) !
 */
 import java.util.Scanner;
 public class exo_01 {
-    public static int lastCity(int[] listCity) {
-        return listCity[listCity.length - 1]; // Retourne la dernière valeur du tableau
-    }
     //function citySelectionned(prends en compte le tableau)
     public static void citiesAll(String[] table_cities) {
         for (int i = 0; i < table_cities.length; i++) {
