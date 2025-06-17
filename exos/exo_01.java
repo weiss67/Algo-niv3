@@ -74,6 +74,7 @@ public class exo_01 {
             System.out.println("Bonjour, quelle ville voulez-vous visiter ?");
             citiesAll(table_cities);
             while(relaunch){
+                
                 int selectionned = sc.nextInt();
                 citySelectionned(selectionned, table_welcomes);
                 System.out.println("Voulez-vous visiter une autre ville ? (false/true)");
