@@ -20,26 +20,36 @@ import java.util.Scanner;
 
 public class exo_07 {
 
-    public static String query(String a){
-        String txt = "";
-        //if (a.equals("y") || a.equals("y")) { //fonctionnel
-        if (a.equalsIgnoreCase("y")) { // Plus optimisé et cela prends en compte si majuscule ou minuscule
-            txt = "Nice to meet you";
-        } else if (a.equals("n")) {
-        txt = "So learn english !";
-        } else { 
-            txt = "Imput Y or N !";
+    public static String rwkTxt(boolean keyboard, String a)
+    { //maj_0.0.1.a
+        Scanner sc = new Scanner(System.in);
+        System.out.print(a);
+        if(keyboard){
+            return sc.next(); //TEST (De base c'était : return sc.nextLine();)
+        }else{
+            return a;
         }
+    }
+
+    public static String query(String a, String y, String n, String true_answer, String false_answer, String error_answer){
+        String txt = "";
+        if (a.equalsIgnoreCase(y)) { // Plus optimisé que "equals" et cela prends en compte si majuscule ou minuscule
+            txt = true_answer;
+        } else if (a.equalsIgnoreCase(n)) {
+        txt = false_answer;
+        } else { 
+            txt = error_answer;}
         return txt;
     }
 
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Do you speak english (Y/N)?");
-        String answer = sc.nextLine();
-
-        System.out.println(query(answer));
-
-        sc.close();
+        try{
+            rwkTxt(false, "\n");//un saut à la ligne pour mieux voir
+            String answer = rwkTxt(true, "Do you speak english (Y/N)?\n");
+            System.out.println(query(answer, "y", "n", "Nice to meet you", "So learn english !", "Imput Y or N !"));
+            //sc.close();
+        }catch (Exception e){
+            System.out.println("ERROR FATAL 404");
+        }
     }
 }
