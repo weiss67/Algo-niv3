@@ -24,13 +24,14 @@ public class myfunctions {
         LocalDate now = LocalDate.now();
         long difference = ChronoUnit.DAYS.between(now, local_date);
         String result = "";
+        rwkTxtString("difference "+difference+" duration "+duration, false, false);
 
-        if(duration <= difference){
+        if(difference < 0){ // si au dessous du 0, évite des -1 ou moins
             rwkTxtString("TEST 1 Différence de "+ difference, false, false);
-            result = "Consommable (Périme bientôt !!!)";
-        }else if(duration > difference){
-            rwkTxtString("TEST 2 Différence de "+ difference, false, false);
             result = "Périmée";
+        }else if(difference <= duration){
+            rwkTxtString("TEST 2 Différence de "+ difference, false, false);
+            result = "Consommable (Périme bientôt !!!)";
         }else{
             rwkTxtString("TEST 3 Différence de "+ difference, false, false);
             result = "Consommable";
@@ -38,13 +39,24 @@ public class myfunctions {
         return result;
     }
 
+    public static double rwkSwitchCase001(String option, double price){
+        switch(option){// voir pour faire des nouvelles functions assez indépendants pour utiliser en tout
+            case "Périmée": price = 0.0; break;
+            case "Consommable (Périme bientôt !!!)": price = myfunctions.rwkOperatorV2("", false, 20, "-%", "Réduction de 20% appliquée pour bientôt fin de dta limite : "+ String.format("%.2f", price), 0); break;
+            default: rwkTxtString("default rwkSwitchCase001", false, true); 
+            return rwkSwitchCase001(option, price); //relancement de sécurité
+        }
+        return price;
+    }
+
     public static ArrayList<String> rwkAddItem(ArrayList<String> tableau, int index){
         String name = rwkTxtString("Veuillez mettre le nom de l'article", true, false);
         String date_manufacturing = rwkDateTime("Veuillez mettre la date de fabrication ", "1", "");
         String date_expiration = rwkDateTime("Veuillez mettre la date de péremption ", "1", "");
         double price = rwkOperator("Prix de base : ", "=", 0);
-        String consumable = rwkCheckdate(date_expiration, 3);
-        tableau.add(index, "Nom : "+name+" | "+index+" | "+date_manufacturing+" | "+date_expiration+" | "+price+" | "+consumable);
+        String consumable = rwkCheckdate(date_expiration, 3); // checking de la limite de date
+        price = rwkSwitchCase001(consumable, price); // modification du prix en fonction de la date
+        tableau.add(index, "("+index+") Nom : "+name+"\nDate de fabrication : "+date_manufacturing+" | Date de péremption : "+date_expiration+" | Prix : "+price+" | "+consumable);
         return tableau;
     }
     
