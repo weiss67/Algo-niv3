@@ -1,8 +1,8 @@
-import java.util.Scanner;
-import methods.functions;
+
+import methods.myfunctions;
 
 public class exo_13 {
     public static void main(String[] args) {
-        functions.rwkTxtString("Voici le résultat "+functions.rwkOperator("Donner une taille en centimètre ?", "/", 100.0)+" en mètre.", false, false);
+        myfunctions.rwkTxtString("Voici le résultat "+myfunctions.rwkOperator("Donner une taille en centimètre ?", "/", 100.0)+" en mètre.", false, false);
     }
 }

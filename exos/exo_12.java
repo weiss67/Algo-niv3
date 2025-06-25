@@ -1,8 +1,8 @@
 import java.util.Scanner; /* Importation de la bibliothèque Java Scanner */
-import methods.functions;
+import methods.myfunctions;
 
 public class exo_12 {
     public static void main(String[] args) {
-        functions.rwkTxtString("Votre prix après réduction : "+functions.rwkCalculator("Votre réduction (en pourcentage %) ?", functions.rwkTxtInt("Votre prix ?"), false, true)+" euros", false, false);   
+        myfunctions.rwkTxtString("Votre prix après réduction : "+myfunctions.rwkCalculator("Votre réduction (en pourcentage %) ?", myfunctions.rwkTxtInt("Votre prix ?"), false, true)+" euros", false, false);   
     }
 }

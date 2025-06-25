@@ -14,13 +14,13 @@
  * 
 */
 
-import java.util.Scanner;
-import methods.functions;
+
+import methods.myfunctions;
 
 public class exo_11 {
     public static void main(String[] args) {
         int solde = 3000;
-        functions.rwkTxtString("\nBonjour, votre solde est à "+ solde+" euros.", false, false);
-        solde = functions.rwkSolde(false, solde);
+        myfunctions.rwkTxtString("\nBonjour, votre solde est à "+ solde+" euros.", false, false);
+        solde = myfunctions.rwkSolde(false, solde);
     }
 }
