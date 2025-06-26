@@ -65,20 +65,22 @@ public class myfunctions {
     }
 
     public static ArrayList<String> rwkRmvItem(ArrayList<String> tableau, int index){
-        rwkTxtString("Veuillez mettre l'ID que vous voulez delete", false, false);
+        int index_delete = rwkTxtInt("Veuillez mettre l'ID que vous voulez delete");
+
+
 
 
         return tableau;
     }
 
-    public static String rwkDeleteName(ArrayList<String> stagiaires, String rechercheNom){
-        if(stagiaires.contains(rechercheNom)){
-            stagiaires.remove(stagiaires.indexOf(rechercheNom));
-            return rechercheNom+" a été delete ";
-        }else{
-            return "Nom introuvable";
-        }
-    }
+    // public static String rwkDeleteName(ArrayList<String> stagiaires, String rechercheNom){
+    //     if(stagiaires.contains(rechercheNom)){
+    //         stagiaires.remove(stagiaires.indexOf(rechercheNom));
+    //         return rechercheNom+" a été delete ";
+    //     }else{
+    //         return "Nom introuvable";
+    //     }
+    // }
 
         //String removedElement = 
         //tableau.remove(1);
