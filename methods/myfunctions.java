@@ -27,13 +27,13 @@ public class myfunctions {
         rwkTxtString("difference "+difference+" duration "+duration, false, false);
 
         if(difference < 0){ // si au dessous du 0, évite des -1 ou moins
-            rwkTxtString("TEST 1 Différence de "+ difference, false, false);
+            //rwkTxtString("TEST 1 Différence de "+ difference, false, false);
             result = "Périmée";
         }else if(difference <= duration){
-            rwkTxtString("TEST 2 Différence de "+ difference, false, false);
+            //rwkTxtString("TEST 2 Différence de "+ difference, false, false);
             result = "Consommable (Périme bientôt !!!)";
         }else{
-            rwkTxtString("TEST 3 Différence de "+ difference, false, false);
+            //rwkTxtString("TEST 3 Différence de "+ difference, false, false);
             result = "Consommable";
         }
         return result;
@@ -42,7 +42,8 @@ public class myfunctions {
     public static double rwkSwitchCase001(String option, double price){
         switch(option){// voir pour faire des nouvelles functions assez indépendants pour utiliser en tout
             case "Périmée": price = 0.0; break;
-            case "Consommable (Périme bientôt !!!)": price = myfunctions.rwkOperatorV2("", false, 20, "-%", "Réduction de 20% appliquée pour bientôt fin de dta limite : "+ String.format("%.2f", price), 0); break;
+            case "Consommable (Périme bientôt !!!)": price = myfunctions.rwkOperatorV2("", false, 20, "-%", "Réduction de 20% appliquée pour bientôt fin de dta limite : "+ String.format("%.2f", price), 0); break;
+            case "Consommable": break;
             default: rwkTxtString("default rwkSwitchCase001", false, true); 
             return rwkSwitchCase001(option, price); //relancement de sécurité
         }
@@ -57,20 +58,67 @@ public class myfunctions {
         String consumable = rwkCheckdate(date_expiration, 3); // checking de la limite de date
         price = rwkSwitchCase001(consumable, price); // modification du prix en fonction de la date
         tableau.add(index, "("+index+") Nom : "+name+"\nDate de fabrication : "+date_manufacturing+" | Date de péremption : "+date_expiration+" | Prix : "+price+" | "+consumable);
+        String add_item = "("+index+") Nom : "+name+"\nDate de fabrication : "+date_manufacturing+" | Date de péremption : "+date_expiration+" | Prix : "+price+" | "+consumable;
+        tableau.add(index, add_item);
+        rwkTxtString("Produit ajouté avec succès !\n"+add_item, false, false);
         return tableau;
     }
-    
+
+    public static ArrayList<String> rwkRmwItem(ArrayList<String> tableau, int index){
+        String name = rwkTxtString("Veuillez mettre le nom de l'article", true, false);
+        String date_manufacturing = rwkDateTime("Veuillez mettre la date de fabrication ", "1", "");
+        String date_expiration = rwkDateTime("Veuillez mettre la date de péremption ", "1", "");
+        double price = rwkOperator("Prix de base : ", "=", 0);
+        String consumable = rwkCheckdate(date_expiration, 3); // checking de la limite de date
+        price = rwkSwitchCase001(consumable, price); // modification du prix en fonction de la date
+        return tableau;
+    }
+
+        //String removedElement = 
+        //tableau.remove(1);
+
+    public static ArrayList<String> rwkSrhItem(ArrayList<String> tableau, int index){
+        String search = rwkTxtString("Veuillez mettre le nom du produit que vous recherchez :", true, false);
+        System.out.print("TEST "+search);
+
+        // if(tableau.contains(search)){
+        //     rwkTxtString(tableau.get(tableau.indexOf(search))+"", false, false);
+        // }else{
+        //     rwkTxtString("Produit introuvable !", false, false);
+        //     return rwkSwitchCase(tableau, index);
+        // }
+
+        boolean found = false;
+        for (String item : tableau) {
+            if (item.contains("Nom : " + search)) { // Cherche "Nom : [recherche]" dans la chaîne
+                rwkTxtString("Produit trouvé :" + item, false, false);
+                found = true;
+            }
+        }
+        if(!found) {
+            rwkTxtString("Aucun produit trouvé pour : " + search, false, false);
+        }
+
+        return tableau;
+    }
+
     // voir pour en faire une V2 ou V3 qui permet d'ajouter des options nous même
     public static ArrayList<String> rwkSwitchCase(ArrayList<String> tableau, int index){
         rwkTxtString("Voulez-vous ? (A) Ajouter un nouvel article | (B) Supprimer un article | (Y) Chercher un article | (X) Quitter", false, false);
         Scanner sc = new Scanner(System.in);
         String option = sc.nextLine().toUpperCase();
         switch(option){// voir pour faire des nouvelles functions assez indépendants pour utiliser en tout
-            case "A": tableau = rwkAddItem(tableau, index); break;
-            case "B": rwkTxtString("function rwkRmvItem",                       false, true); break;
-            case "Y": rwkTxtString("function rwkearchitem",                     false, true); break;
-            case "X": rwkTxtString("Game over",                                 false, true); break;
-            default: rwkTxtString("Veuillez répondre par (A), (B), (Y) ou (X)", false, true); 
+            case "A": tableau = rwkAddItem(tableau, index); 
+            return rwkSwitchCase(tableau, index + 1); //relance le tableau de proposition avec index ajouté
+            case "B": rwkTxtString("function rwkRmvItem", false, true);
+            return rwkSwitchCase(tableau, index + 1);
+            case "Y":
+            rwkSrhItem(tableau, index); 
+            return rwkSwitchCase(tableau, index );
+            //rwkSrhItem(tableau, index); 
+            //return rwkSwitchCase(tableau, index + 1);
+            case "X": rwkTxtString("Game over", false, true); break;
+            default: rwkTxtString("Veuillez répondre que par (A), (B), (Y) ou (X)", false, true); 
             return rwkSwitchCase(tableau, index); //relancement de sécurité
         }
         return tableau;
@@ -142,10 +190,16 @@ public class myfunctions {
         }
     }
 
-    public static String TrouverUnNoms(ArrayList<String> stagiaires, String rechercheNom){
+    //public static String TrouverUnNoms(ArrayList<String> stagiaires, String rechercheNom){
+    public static String TrouverUnNoms(ArrayList<String> stagiaires){
+        String rechercheNom = rwkTxtString("Rechercher :", true, false);
+
         if(stagiaires.contains(rechercheNom)){
+            rwkTxtString(rechercheNom+" Existe dans la liste, à la position "+stagiaires.indexOf(rechercheNom), false, false);
+            //return stagiaires;
             return rechercheNom+" Existe dans la liste, à la position "+stagiaires.indexOf(rechercheNom);
         }else{
+            //return stagiaires;
             return "Nom introuvable";
         }
     }
@@ -249,7 +303,7 @@ public class myfunctions {
         try{
             Scanner sc = new Scanner(System.in);
             rwkTxtString(prompt, false, false);
-            double clavier = sc.nextInt();
+            double clavier = sc.nextDouble();
             switch(operator){
                 case "+":  result += clavier; break;
                 case "-":  result -= clavier; break;
