@@ -64,14 +64,20 @@ public class myfunctions {
         return tableau;
     }
 
-    public static ArrayList<String> rwkRmwItem(ArrayList<String> tableau, int index){
-        String name = rwkTxtString("Veuillez mettre le nom de l'article", true, false);
-        String date_manufacturing = rwkDateTime("Veuillez mettre la date de fabrication ", "1", "");
-        String date_expiration = rwkDateTime("Veuillez mettre la date de péremption ", "1", "");
-        double price = rwkOperator("Prix de base : ", "=", 0);
-        String consumable = rwkCheckdate(date_expiration, 3); // checking de la limite de date
-        price = rwkSwitchCase001(consumable, price); // modification du prix en fonction de la date
+    public static ArrayList<String> rwkRmvItem(ArrayList<String> tableau, int index){
+        rwkTxtString("Veuillez mettre l'ID que vous voulez delete", false, false);
+
+
         return tableau;
+    }
+
+    public static String rwkDeleteName(ArrayList<String> stagiaires, String rechercheNom){
+        if(stagiaires.contains(rechercheNom)){
+            stagiaires.remove(stagiaires.indexOf(rechercheNom));
+            return rechercheNom+" a été delete ";
+        }else{
+            return "Nom introuvable";
+        }
     }
 
         //String removedElement = 
@@ -112,11 +118,8 @@ public class myfunctions {
             return rwkSwitchCase(tableau, index + 1); //relance le tableau de proposition avec index ajouté
             case "B": rwkTxtString("function rwkRmvItem", false, true);
             return rwkSwitchCase(tableau, index + 1);
-            case "Y":
-            rwkSrhItem(tableau, index); 
-            return rwkSwitchCase(tableau, index );
-            //rwkSrhItem(tableau, index); 
-            //return rwkSwitchCase(tableau, index + 1);
+            case "Y": rwkSrhItem(tableau, index); 
+            return rwkSwitchCase(tableau, index);
             case "X": rwkTxtString("Game over", false, true); break;
             default: rwkTxtString("Veuillez répondre que par (A), (B), (Y) ou (X)", false, true); 
             return rwkSwitchCase(tableau, index); //relancement de sécurité
