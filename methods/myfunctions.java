@@ -3,11 +3,33 @@ package methods;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
+import java.time.temporal.ChronoUnit; //import d'un outil pour comparer entre dates
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class myfunctions {
+
+    public static String rwkTxtException(Exception e) {
+        String errorType = e.getClass().getSimpleName(); // Récupère le nom simple de l'exception
+        String errorMessage = e.getMessage(); // Récupère le message d'erreur
+        String err = "Erreur : ";
+
+        switch (errorType) {
+            case "InputMismatchException":
+                return err+"Entrée invalide | Format attendu (nombre)";
+            case "IndexOutOfBoundsException":
+                return err+"Index hors limites";
+            case "NullPointerException":
+                return err+"Objet non initialisé (Null)";
+            case "NumberFormatException":
+                return err+"Conversion numérique impossible";
+            case "DateTimeParseException":
+                return err+"Date invalide | Format attendu (JJ/MM/AAAA ou/et HH:MM)";
+            default:
+                return err+"inconnue : " + errorMessage;
+        }
+    }
+
     //Lister une arrays de A à Z grâce à length pour arrêter, peut être utile pour ajouter à tout moment
     public static String rwkLoopArrays(String[] arrays){
         String result = "";
@@ -24,7 +46,7 @@ public class myfunctions {
         LocalDate now = LocalDate.now();
         long difference = ChronoUnit.DAYS.between(now, local_date);
         String result = "";
-        rwkTxtString("difference "+difference+" duration "+duration, false, false);
+        rwkTxtString("Il y a "+difference+" jours de différence entre aujourd'hui et péremption (Période de 20 % si proche des "+duration+" jours restants)", false, false);
 
         if(difference < 0){ // si au dessous du 0, évite des -1 ou moins
             //rwkTxtString("TEST 1 Différence de "+ difference, false, false);
@@ -51,25 +73,29 @@ public class myfunctions {
     }
 
     public static ArrayList<String> rwkAddItem(ArrayList<String> tableau, int index){
-        String name = rwkTxtString("Veuillez mettre le nom de l'article", true, false);
-        String date_manufacturing = rwkDateTime("Veuillez mettre la date de fabrication ", "1", "");
-        String date_expiration = rwkDateTime("Veuillez mettre la date de péremption ", "1", "");
-        double price = rwkOperator("Prix de base : ", "=", 0);
-        String consumable = rwkCheckdate(date_expiration, 3); // checking de la limite de date
-        price = rwkSwitchCase001(consumable, price); // modification du prix en fonction de la date
-        tableau.add(index, "("+index+") Nom : "+name+"\nDate de fabrication : "+date_manufacturing+" | Date de péremption : "+date_expiration+" | Prix : "+price+" | "+consumable);
+        String name                 = rwkTxtString("Veuillez mettre le nom de l'article", true, false);
+        String date_manufacturing   = rwkDateTime("Veuillez mettre la date de fabrication ", "1", "");
+        String date_expiration      = rwkDateTime("Veuillez mettre la date de péremption ", "1", "");
+        double price                = rwkOperator("Prix de base : ", "=", 0);
+        String consumable           = rwkCheckdate(date_expiration, 3); // checking de la limite de date
+        price                       = rwkSwitchCase001(consumable, price); // modification du prix en fonction de la date
         String add_item = "("+index+") Nom : "+name+"\nDate de fabrication : "+date_manufacturing+" | Date de péremption : "+date_expiration+" | Prix : "+price+" | "+consumable;
         tableau.add(index, add_item);
-        rwkTxtString("Produit ajouté avec succès !\n"+add_item, false, false);
+        rwkTxtString("Produit ajouté avec succès ! "+add_item, false, false);
         return tableau;
     }
 
-    public static ArrayList<String> rwkRmvItem(ArrayList<String> tableau, int index){
+    public static ArrayList<String> rwkRmvItemViaIndex(ArrayList<String> tableau, int index){
         int index_delete = rwkTxtInt("Veuillez mettre l'ID que vous voulez delete");
-
-
-
-
+        if(index_delete >= 0 && index_delete < tableau.size()) {
+            tableau.remove(index_delete);
+            rwkTxtString(index_delete+" a été deleté !", false, false);
+            return tableau; // mets à jour le tableau en retournant
+        }
+        if (index_delete > tableau.size()) {
+            rwkTxtString("Index invalide !", false, false);
+            rwkRmvItemViaIndex(tableau, index);
+        }
         return tableau;
     }
 
@@ -82,12 +108,9 @@ public class myfunctions {
     //     }
     // }
 
-        //String removedElement = 
-        //tableau.remove(1);
-
     public static ArrayList<String> rwkSrhItem(ArrayList<String> tableau, int index){
         String search = rwkTxtString("Veuillez mettre le nom du produit que vous recherchez :", true, false);
-        System.out.print("TEST "+search);
+        //System.out.print("TEST "+search);
 
         // if(tableau.contains(search)){
         //     rwkTxtString(tableau.get(tableau.indexOf(search))+"", false, false);
@@ -95,18 +118,15 @@ public class myfunctions {
         //     rwkTxtString("Produit introuvable !", false, false);
         //     return rwkSwitchCase(tableau, index);
         // }
-
-        boolean found = false;
         for (String item : tableau) {
             if (item.contains("Nom : " + search)) { // Cherche "Nom : [recherche]" dans la chaîne
                 rwkTxtString("Produit trouvé :" + item, false, false);
-                found = true;
+                return tableau;
+            }else{
+            rwkTxtString("Aucun produit trouvé pour : " + search, false, false);
+            return tableau;
             }
         }
-        if(!found) {
-            rwkTxtString("Aucun produit trouvé pour : " + search, false, false);
-        }
-
         return tableau;
     }
 
@@ -118,7 +138,7 @@ public class myfunctions {
         switch(option){// voir pour faire des nouvelles functions assez indépendants pour utiliser en tout
             case "A": tableau = rwkAddItem(tableau, index); 
             return rwkSwitchCase(tableau, index + 1); //relance le tableau de proposition avec index ajouté
-            case "B": rwkTxtString("function rwkRmvItem", false, true);
+            case "B": tableau = rwkRmvItemViaIndex(tableau, index);
             return rwkSwitchCase(tableau, index + 1);
             case "Y": rwkSrhItem(tableau, index); 
             return rwkSwitchCase(tableau, index);
@@ -175,10 +195,9 @@ public class myfunctions {
 
                 default: System.out.println("(op_error)"); break;
             }
-            //rwkTxtString("CHECK RESULT RWKOPERATOR "+result, false, false);
             return result;
         }catch (Exception e){
-            rwkTxtString("Veuillez mettre comme demandé JJ/MM/AAAA ou/et HH:MM", false, false);
+            rwkTxtString(rwkTxtException(e), false, false);
             return rwkDateTime(prompt, operator, result);
         }
     }
@@ -283,7 +302,7 @@ public class myfunctions {
             rwkTxtString(prompt, false, false);
             return sc.nextInt();
         }catch (Exception e){
-            rwkTxtString(rwkTxtError(false, true), false, false);
+            rwkTxtString(rwkTxtException(e), false, false);
             return rwkTxtInt(prompt);
         }
     }
