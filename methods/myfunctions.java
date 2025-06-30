@@ -2,9 +2,10 @@ package methods;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit; //import d'un outil pour comparer entre dates
-import java.util.ArrayList;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList; //import d'un outil pour comparer entre dates
 import java.util.Scanner;
 
 public class myfunctions {
@@ -18,12 +19,15 @@ public class myfunctions {
         return result;
     }
 
-    public static String rwkCheckdate(String date_a, int duration){
+    public static String rwkCheckdate(String date_a, int duration, ChronoUnit unit){
+        //ChronoUnit.DAYS or ChronoUnit.MONTHS or ChronoUnit.YEARS
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate local_date = LocalDate.parse(date_a, formatter);
 
         LocalDate now = LocalDate.now();
-        long difference = ChronoUnit.DAYS.between(now, local_date);
+        //long difference = ChronoUnit.DAYS.between(now, local_date);
+        long difference = unit.between(now, local_date);
         String result = "";
         rwkTxtString("Il y a "+difference+" jours de différence entre aujourd'hui et péremption (Période de 20 % si proche des "+duration+" jours restants)", false, false);
 
@@ -51,14 +55,44 @@ public class myfunctions {
         return price;
     }
 
-    public static ArrayList<String> rwkAddItem(ArrayList<String> tableau, int index){
+    public static String addProductType(String []type) {
+        // Implémentez la logique pour ajouter un produit avec son type
+        // Par exemple, vous pouvez créer une nouvelle entrée dans la liste avec le type du produit
+        String typeName = "";
+        //addProductType:while (true) {
+        try {
+        System.out.println("Type de produit :");
+        for (int i = 0; i < type.length; i++) {
+            System.out.println("(" + (i + 1) + "). " + type[i]);
+        }
+        int typeChoice = rwkTxtInt("Veuillez choisir votre type de produit :");
+            //int typeChoice = clavier.nextInt();
+            typeName = type[typeChoice - 1];
+                    System.out.println("Type de produit choisi : " + typeName);
+                    
+                    //clavier.nextLine();
+        } catch (Exception e) {
+            Exceptioner.TxtException(e,type.length);
+            //clavier.nextLine();
+            //continue addProductType; // Recommencer la saisie du type
+            addProductType(type);
+        }
+        return typeName;
+        //}
+    }
+
+    public static ArrayList<String> rwkAddItem(ArrayList<String> tableau, int index, String[] types){
         String name                 = rwkTxtString("Veuillez mettre le nom de l'article", true, false);
-        String date_manufacturing   = rwkDateTime("Veuillez mettre la date de fabrication ", "1", "");
+        String typeName             = addProductType(types);
+        String test_date            = rwkDateTime("Veuillez mettre la date de fabrication ", "1", "");
+        String test_time            = rwkDateTime("Veuillez mettre l'heure et minute de fabrication ", "2", "");
+        String date_manufacturing   = test_date+" "+test_time;
+        //String date_manufacturing   = rwkDateTime("Veuillez mettre la date de fabrication ", "1", "");
         String date_expiration      = rwkDateTime("Veuillez mettre la date de péremption ", "1", "");
         double price                = rwkOperator("Prix de base : ", "=", 0);
-        String consumable           = rwkCheckdate(date_expiration, 3); // checking de la limite de date
+        String consumable           = rwkCheckdate(date_expiration, 3, ChronoUnit.DAYS); // checking de la limite de date
         price                       = rwkSwitchCase001(consumable, price); // modification du prix en fonction de la date
-        String add_item = "("+index+") Nom : "+name+"\nDate de fabrication : "+date_manufacturing+" | Date de péremption : "+date_expiration+" | Prix : "+price+" | "+consumable;
+        String add_item = "("+index+") Nom : "+name+"\nType de produit : "+typeName+" | Date de fabrication : "+date_manufacturing+" | Date de péremption : "+date_expiration+" | Prix : "+price+" | "+consumable;
         tableau.add(index, add_item);
         rwkTxtString("Produit ajouté avec succès ! "+add_item, false, false);
         return tableau;
@@ -78,15 +112,6 @@ public class myfunctions {
         return tableau;
     }
 
-    // public static String rwkDeleteName(ArrayList<String> stagiaires, String rechercheNom){
-    //     if(stagiaires.contains(rechercheNom)){
-    //         stagiaires.remove(stagiaires.indexOf(rechercheNom));
-    //         return rechercheNom+" a été delete ";
-    //     }else{
-    //         return "Nom introuvable";
-    //     }
-    // }
-
     public static ArrayList<String> rwkSrhItem(ArrayList<String> tableau, int index){
         String search = rwkTxtString("Veuillez mettre le nom du produit que vous recherchez :", true, false);
         //System.out.print("TEST "+search);
@@ -97,39 +122,40 @@ public class myfunctions {
         //     rwkTxtString("Produit introuvable !", false, false);
         //     return rwkSwitchCase(tableau, index);
         // }
+        boolean found = false;
         for (String item : tableau) {
             if (item.contains("Nom : " + search)) { // Cherche "Nom : [recherche]" dans la chaîne
                 rwkTxtString("Produit trouvé :" + item, false, false);
-                return tableau;
-            }else{
-            rwkTxtString("Aucun produit trouvé pour : " + search, false, false);
-            return tableau;
+                found = true;
+                break;
             }
+        }
+        if(!found) {
+            rwkTxtString("Aucun produit trouvé pour : " + search, false, false);
         }
         return tableau;
     }
 
     // voir pour en faire une V2 ou V3 qui permet d'ajouter des options nous même
-    public static ArrayList<String> rwkSwitchCase(ArrayList<String> tableau, int index){
-        rwkTxtString("Voulez-vous ? (A) Ajouter un nouvel article | (B) Supprimer un article | (Y) Chercher un article | (X) Quitter", false, false);
-        Scanner sc = new Scanner(System.in);
-        String option = sc.nextLine().toUpperCase();
+    public static ArrayList<String> rwkSwitchCase(ArrayList<String> tableau, int index, String[] types){
+        String option = rwkTxtString("Voulez-vous ? (A) Ajouter un nouvel article | (B) Supprimer un article | (Y) Chercher un article | (W) Afficher la liste d'articles | (X) Quitter", true, true);
         switch(option){// voir pour faire des nouvelles functions assez indépendants pour utiliser en tout
-            case "A": tableau = rwkAddItem(tableau, index); 
-            return rwkSwitchCase(tableau, index + 1); //relance le tableau de proposition avec index ajouté
+            case "A": tableau = rwkAddItem(tableau, index, types); 
+            return rwkSwitchCase(tableau, index + 1, types); //relance le tableau de proposition avec index ajouté
             case "B": tableau = rwkRmvItemViaIndex(tableau, index);
-            return rwkSwitchCase(tableau, index + 1);
-            case "Y": rwkSrhItem(tableau, index); 
-            return rwkSwitchCase(tableau, index);
-            case "X": rwkTxtString("Game over", false, true); break;
+            return rwkSwitchCase(tableau, index + 1, types);
+            case "Y": rwkSrhItem(tableau, index);
+            return rwkSwitchCase(tableau, index, types);
+            case "W": rwkLoopArraysList(tableau);
+            return rwkSwitchCase(tableau, index, types);
+            case "X": rwkTxtString("Merci au revoir ! ", false, false); break;
             default: rwkTxtString("Veuillez répondre que par (A), (B), (Y) ou (X)", false, true); 
-            return rwkSwitchCase(tableau, index); //relancement de sécurité
+            return rwkSwitchCase(tableau, index, types); //relancement de sécurité
         }
         return tableau;
     }
 
     public static String rwkDateTimeFormatter(String prompt){
-        Scanner sc = new Scanner(System.in);
         //variable formatter qui permet de convertir la date en europe
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
@@ -148,18 +174,18 @@ public class myfunctions {
         try{
             String time_txt = "HH:mm"; String date_txt = "dd/MM/yyyy";
             DateTimeFormatter formatter;
-            Scanner sc = new Scanner(System.in);
             switch(operator){
                 case "1": //add date and not time
                 formatter = DateTimeFormatter.ofPattern(date_txt);
                 String date_string = rwkTxtString(prompt +" (format JJ/MM/AAAA)", true, false);
                 //checking format date
-                LocalDate local_date = LocalDate.parse(date_string, formatter);
+                LocalDate.parse(date_string, formatter); // check si bien format date
                 result = date_string; break;
 
                 case "2":  //add time and not date
                 formatter = DateTimeFormatter.ofPattern(time_txt);
                 String time_string = rwkTxtString(prompt +" (format HH:MM)", true, false);
+                LocalTime.parse(time_string, formatter); // check si bien format time
                 result = time_string; break;
 
                 case "3":  //collate date and time
@@ -170,8 +196,9 @@ public class myfunctions {
                 LocalDateTime date_time = LocalDateTime.parse(result, formatter);
                 String formattedDate = date_time.format(formatter);
                 System.out.println("Date d'aujourd'hui format Francophone: " + formattedDate);
-                result = formattedDate; break; 
+                result = formattedDate; break;
 
+                //case "5":
 
                 // voir d'autres options comme prendre le temps et l'afficher en string
                 // voir pour ajouter d'autres options comme ajouter soit un an, un jour ect
@@ -181,7 +208,7 @@ public class myfunctions {
             }
             return result;
         }catch (Exception e){
-            rwkTxtString(rwkTxtException(e), false, false);
+            Exceptioner.TxtException(e, 0);
             return rwkDateTime(prompt, operator, result);
         }
     }
@@ -192,9 +219,14 @@ public class myfunctions {
         }
     }
 
-    public static void ListeDesNoms(ArrayList<String> stagiaires){
-        for(String nom:stagiaires){
-            System.out.println(nom);
+    public static void rwkLoopArraysList(ArrayList<String> tableau){
+        if (tableau.isEmpty()) {
+            rwkTxtString("La liste est vide", false, false);
+        }else{
+            rwkTxtString("Voici la liste d'articles", false, false);
+            for(String nom:tableau){
+                rwkTxtString(nom, false, false);
+            }
         }
     }
 
@@ -286,7 +318,7 @@ public class myfunctions {
             rwkTxtString(prompt, false, false);
             return sc.nextInt();
         }catch (Exception e){
-            rwkTxtString(rwkTxtException(e), false, false);
+            Exceptioner.TxtException(e, 0);
             return rwkTxtInt(prompt);
         }
     }
