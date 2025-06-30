@@ -10,11 +10,13 @@ public class jalon_blanc_dwm {
     boolean alimentary = true;
     ChronoUnit unit = ChronoUnit.DAYS; // Quel type de temps ?
     int duration = 3; // Nombre en unité temps
+    int onsale = 0; //% en solde
+    int reduce = 20; //% en reduction
 
     String[] types = {"Viande", "Légume", "Féculant", "Fruit", "Laitage", "Poisson", "Dessert", "Pâtisserie", "Boulangerie"};    
     //myfunctions.rwkLoopArrays(types);
     int index = 0;
     ArrayList<String> inventory = new ArrayList<>();
-    inventory = myfunctions.rwkSwitchCase(inventory, index, types, alimentary, duration, unit);
+    inventory = myfunctions.rwkSwitchCase(inventory, index, types, alimentary, duration, unit, onsale, reduce);
     }
 }

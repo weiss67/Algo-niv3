@@ -10,11 +10,17 @@ public class jalon_blanc_cda {
     boolean alimentary = false;
     ChronoUnit unit = ChronoUnit.MONTHS; // Quel type de temps ?
     int duration = 4; // Nombre en unité temps
+    
+    //Non cumul 
+    int onsale = 40; //% en solde
+    int reduce = 10; //% en reduction
 
     String[] types = {"TV", "Electro-ménager", "Micro-Informatique", "Audio"};    
     //myfunctions.rwkLoopArrays(types);
     int index = 0;
     ArrayList<String> inventory = new ArrayList<>();
-    inventory = myfunctions.rwkSwitchCase(inventory, index, types, alimentary, duration, unit);
+    inventory = myfunctions.rwkSwitchCase(inventory, index, types, alimentary, duration, unit, onsale, reduce);
     }
 }
+
+// voir aussi pour le mdp et id

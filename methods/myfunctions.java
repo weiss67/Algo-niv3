@@ -19,23 +19,32 @@ public class myfunctions {
         return result;
     }
 
-    public static String rwkCheckdate(String date_a, int duration, ChronoUnit unit){
+    public static String rwkCheckdate(String date_string, int duration, ChronoUnit unit, boolean alimentary){
         //ChronoUnit.DAYS or ChronoUnit.MONTHS or ChronoUnit.YEARS
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDate local_date = LocalDate.parse(date_a, formatter);
+        LocalDate local_date = LocalDate.parse(date_string, formatter);
 
         LocalDate now = LocalDate.now();
-        long difference = unit.between(now, local_date);
-        String result = "";
-        rwkTxtString("Il y a "+difference+" "+unit+" de différence entre aujourd'hui et péremption (Période de 20 % si proche des "+duration+" jours restants)", false, false);
+        long difference;
 
-        if(difference < 0){ // si au dessous du 0, évite des -1 ou moins
+        if(alimentary){
+            difference = unit.between(now, local_date);
+        }else{
+            difference = unit.between(local_date, now);
+        }
+
+        String result = "";
+        //rwkTxtString("Il y a "+difference+" "+unit+" de différence entre aujourd'hui et péremption (Période de 20 % si proche des "+duration+" jours restants)", false, false);
+        
+        //rwkTxtString(difference+" >= "+duration, false, false);
+
+        if(alimentary && (difference < 0)){ // si au dessous du 0, évite des -1 ou moins
             //rwkTxtString("TEST 1 | Différence de "+ difference, false, false);
             //result = "Périmée"; //fonctionnel
             result = "EXPIRED";
-        }else if(difference <= duration){
-            //rwkTxtString("TEST 2 Différence de "+ difference, false, false);
+        }else if( (alimentary && (difference <= duration)) || (!alimentary && (difference >= duration))){
+            //rwkTxtString("TEST 2 LIMITED", false, false);
             //result = "Consommable (Périme bientôt !!!)";
             result = "LIMITED";
         }else{
@@ -43,10 +52,19 @@ public class myfunctions {
             //result = "Consommable";
             result = "VALIDATED";
         }
+
+        // if(!alimentary && (difference >= duration)){
+        //     rwkTxtString("TEST 2 LIMITED", false, false);
+        //     //result = "Consommable (Périme bientôt !!!)";
+        //     result = "LIMITED";
+        // }else{
+        //     result = "VALIDATED";
+        // }
+
         return result;
     }
 
-    public static double rwkSwitchCasePrice(String option, double price, boolean isOnSale){
+    public static double rwkSwitchCasePrice(String option, double price, boolean isOnSale, int onsale, int reduce){
         switch(option){// voir pour faire des nouvelles functions assez indépendants pour utiliser en tout
             //case "Périmée": 
             case "EXPIRED": 
@@ -54,21 +72,24 @@ public class myfunctions {
             break;
             //case "Consommable (Périme bientôt !!!)": 
             case "LIMITED":
+            //rwkTxtString("CHECK rwkSwitchCasePrice 1 "+price, false, false);
             int discount;
             if (isOnSale) {
-                discount = 40;
-                rwkTxtString("(Réduction de 40% appliquée)", false, false); 
+                //discount = 40;
+                discount = onsale;
+                rwkTxtString("(Solde de "+onsale+"% appliquée)", false, false); 
             } else {
-                discount = 10;
-                rwkTxtString("(Réduction de 10% appliquée)", false, false);
+                //discount = 10;
+                discount = reduce;
+                rwkTxtString("(Réduction de "+reduce+"% appliquée)", false, false);
             }
-            price = myfunctions.rwkOperatorV2("", false, discount, "-%", "Réduction de 20% appliquée pour bientôt fin de date limite : "+ String.format("%.2f", price), 0); 
+            price = myfunctions.rwkOperatorV2("", false, discount, "-%", "", price); 
             break;
             //case "Consommable":
             case "VALIDATED":
             break;
             default: rwkTxtString("default rwkSwitchCasePrice", false, true); 
-            return rwkSwitchCasePrice(option, price, isOnSale); //relancement de sécurité
+            return rwkSwitchCasePrice(option, price, isOnSale, onsale, reduce); //relancement de sécurité
         }
         return price;
     }
@@ -92,7 +113,7 @@ public class myfunctions {
         return typeName;
     }
 
-    public static ArrayList<String> rwkAddItem(ArrayList<String> tableau, int index, String[] types, boolean alimentary, int duration, ChronoUnit unit){
+    public static ArrayList<String> rwkAddItem(ArrayList<String> tableau, int index, String[] types, boolean alimentary, int duration, ChronoUnit unit, int onsale, int reduce){
         String name                 = rwkTxtString("Veuillez mettre le nom de l'article", true, false);
         String typeName             = addProductType(types);
         //String test_date            = rwkDateTime("Veuillez mettre la date de fabrication ", "1", "");
@@ -100,26 +121,19 @@ public class myfunctions {
         //String date_manufacturing   = test_date+" "+test_time; //fonctionnel
         String date_manufacturing   = rwkDateTime("Veuillez mettre la date de fabrication ", "1", "");
         
-        String date_expiration = "";
+        String date_expiration = ""; String date_expiration_txt = ""; String date_check = date_manufacturing;
         if (alimentary){ //Demande la date de péremption si alimentaire
             date_expiration      = rwkDateTime("Veuillez mettre la date de péremption ", "1", "");
+            date_expiration_txt = "Date de péremption : "+date_expiration+" | ";
+            date_check = date_expiration;
         }
         
         double price                = rwkOperator("Prix de base : ", "=", 0);
-
-        String date_check = "";
-        if(alimentary){
-            date_check = date_expiration;
-        }else{
-            date_check = date_manufacturing;
-        }
-
-        //String consumable           = rwkCheckdate(date_check, duration, ChronoUnit.DAYS); // checking de la limite de date
-        String consumable           = rwkCheckdate(date_check, duration, unit); // checking de la limite de date
+        String consumable           = rwkCheckdate(date_check, duration, unit, alimentary); // checking de la limite de date
         boolean isOnSale            = rwkTxtBoolean("En solde ? (OUI/NON)", true);
-        price                       = rwkSwitchCasePrice(consumable, price, isOnSale); // modification du prix en fonction de la date
+        price                       = rwkSwitchCasePrice(consumable, price, isOnSale, onsale, reduce); // modification du prix en fonction de la date
         
-        String add_item = "("+index+") Nom : "+name+"\nType de produit : "+typeName+" | Date de fabrication : "+date_manufacturing+" | Date de péremption : "+date_expiration+" | Prix : "+price+" | "+consumable;
+        String add_item = "("+index+") Nom : "+name+"\nType de produit : "+typeName+" | Date de fabrication : "+date_manufacturing+" | "+date_expiration_txt+"Prix : "+String.format("%.2f", price)+" | "+consumable;
         tableau.add(index, add_item);
         rwkTxtString("Produit ajouté avec succès ! "+add_item, false, false);
         return tableau;
@@ -164,20 +178,20 @@ public class myfunctions {
     }
 
     // voir pour en faire une V2 ou V3 qui permet d'ajouter des options nous même
-    public static ArrayList<String> rwkSwitchCase(ArrayList<String> tableau, int index, String[] types, boolean alimentary, int duration, ChronoUnit unit){
+    public static ArrayList<String> rwkSwitchCase(ArrayList<String> tableau, int index, String[] types, boolean alimentary, int duration, ChronoUnit unit, int onsale, int reduce){
         String option = rwkTxtString("Voulez-vous ? (A) Ajouter un nouvel article | (B) Supprimer un article | (Y) Chercher un article | (W) Afficher la liste d'articles | (X) Quitter", true, true);
         switch(option){// voir pour faire des nouvelles functions assez indépendants pour utiliser en tout
-            case "A": tableau = rwkAddItem(tableau, index, types, alimentary, duration, unit); 
-            return rwkSwitchCase(tableau, index + 1, types, alimentary, duration, unit); //relance le tableau de proposition avec index ajouté
+            case "A": tableau = rwkAddItem(tableau, index, types, alimentary, duration, unit, onsale, reduce); 
+            return rwkSwitchCase(tableau, index + 1, types, alimentary, duration, unit, onsale, reduce); //relance le tableau de proposition avec index ajouté
             case "B": tableau = rwkRmvItemViaIndex(tableau, index);
-            return rwkSwitchCase(tableau, index, types, alimentary, duration, unit);
+            return rwkSwitchCase(tableau, index, types, alimentary, duration, unit, onsale, reduce);
             case "Y": rwkSrhItem(tableau, index);
-            return rwkSwitchCase(tableau, index, types, alimentary, duration, unit);
+            return rwkSwitchCase(tableau, index, types, alimentary, duration, unit, onsale, reduce);
             case "W": rwkLoopArraysList(tableau);
-            return rwkSwitchCase(tableau, index, types, alimentary, duration, unit);
+            return rwkSwitchCase(tableau, index, types, alimentary, duration, unit, onsale, reduce);
             case "X": rwkTxtString("Merci au revoir ! ", false, false); break;
             default: rwkTxtString("Veuillez répondre que par (A), (B), (Y) ou (X)", false, true); 
-            return rwkSwitchCase(tableau, index, types, alimentary, duration, unit); //relancement de sécurité
+            return rwkSwitchCase(tableau, index, types, alimentary, duration, unit, onsale, reduce); //relancement de sécurité
         }
         return tableau;
     }
