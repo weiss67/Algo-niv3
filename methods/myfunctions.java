@@ -9,25 +9,38 @@ import java.util.Scanner;
 
 public class myfunctions {
 
-    public static String rwkTxtException(Exception e) {
+    public static void TxtException(Exception e, int total) {
         String errorType = e.getClass().getSimpleName(); // Récupère le nom simple de l'exception
         String errorMessage = e.getMessage(); // Récupère le message d'erreur
         String err = "Erreur : ";
-
+        String messageErr="";
         switch (errorType) {
             case "InputMismatchException":
-                return err+"Entrée invalide | Format attendu (nombre)";
+                messageErr = err+"Entrée invalide | Format attendu (nombre)";
+                break;
+            case "ArrayIndexOutOfBoundsException":
+                if(total > 0) {
+                    messageErr = err+"Index hors limites | Veuillez choisir un nombre entre 1 et "+total;
+                } else {
+                    messageErr = err+"Liste vide | Veuillez ajouter des éléments à la liste avant de choisir un index.";
+                } break;
             case "IndexOutOfBoundsException":
-                return err+"Index hors limites";
+                messageErr = err+"Index hors limites";
+                break;
             case "NullPointerException":
-                return err+"Objet non initialisé (Null)";
+                messageErr = err+"Objet non initialisé (Null)";
+                break;
             case "NumberFormatException":
-                return err+"Conversion numérique impossible";
+                messageErr = err+"Conversion numérique impossible";
+                break;
             case "DateTimeParseException":
-                return err+"Date invalide | Format attendu (JJ/MM/AAAA ou/et HH:MM)";
+                messageErr = err+"Date invalide | Format attendu (JJ/MM/AAAA ou/et HH:MM)";
+                break;
             default:
-                return err+"inconnue : " + errorMessage;
+                messageErr = err+"inconnue : " + errorMessage;
+                break;
         }
+        System.out.println(messageErr);
     }
 
     //Lister une arrays de A à Z grâce à length pour arrêter, peut être utile pour ajouter à tout moment
@@ -191,7 +204,12 @@ public class myfunctions {
                 LocalDateTime date_time = LocalDateTime.parse(result, formatter);
                 String formattedDate = date_time.format(formatter);
                 System.out.println("Date d'aujourd'hui format Francophone: " + formattedDate);
-                result = formattedDate; break;
+                result = formattedDate; break; 
+
+
+                // voir d'autres options comme prendre le temps et l'afficher en string
+                // voir pour ajouter d'autres options comme ajouter soit un an, un jour ect
+                // Essyere de voir si possible d'utiliser un variable à la place de parseYear ???
 
                 default: System.out.println("(op_error)"); break;
             }
