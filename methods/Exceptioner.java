@@ -1,4 +1,6 @@
 
+package methods;
+
 public class Exceptioner {
 
     public static void TxtException(Exception e, int total) {
