@@ -100,18 +100,41 @@ public class myfunctions {
         // Par exemple, vous pouvez créer une nouvelle entrée dans la liste avec le type du produit
         String typeName = "";
         try {
-        System.out.println("Type de produit :");
+        rwkTxtString("Type de produit :", false, false);
         for (int i = 0; i < type.length; i++) {
             System.out.println("(" + (i + 1) + "). " + type[i]);
         }
         int typeChoice = rwkTxtInt("Veuillez choisir votre type de produit :");
             typeName = type[typeChoice - 1];
-                    System.out.println("Type de produit choisi : " + typeName);
+                    rwkTxtString("Type de produit choisi : " + typeName, false, false);
         } catch (Exception e) {
             Exceptioner.TxtException(e,type.length);
             addProductType(type);
         }
         return typeName;
+    }
+
+    public static String rwkReference(String reference, int reduct) {
+        try {// function qui permet de réduire le mot souhaité au nombre de caractère demandé
+            if (reference.length() <= reduct){
+                return reference;}// si déjà en 2 caractères, retourn directement sans modif
+            return reference.substring(0, reduct);
+        } catch (Exception e) {
+            Exceptioner.TxtException(e, 0);
+            rwkReference(reference, reduct);
+        }
+        return reference;
+    }    
+    
+    public static Double rwkCountColor(double count, String color) {
+        switch(color){// voir pour faire des nouvelles functions assez indépendants pour utiliser en tout
+            case "Blanc": return count+500; //relance le tableau de proposition avec index ajouté
+            case "Noir": return count+0;
+            case "Rouge": return count+2000;
+            case "Bleu": return count+1000;
+            default: rwkTxtString("Veuillez répondre que par (A), (B), (Y) ou (X)", false, true); 
+            return rwkCountColor(count, color); //relancement de sécurité
+        }
     }
 
     public static String[] addProductTypeTest(String[][] type) {
@@ -161,39 +184,48 @@ public class myfunctions {
 
         if ("DEALERSHIP".equals(sector)){
             rwkTxtString("Vous voulez ajouter une voiture, très bien.", false, false);
-            choix             = addProductTypeTest(all_categorys);
+            choix = addProductTypeTest(all_categorys);
 
             String marque = choix[0];
             String modele = choix[1];
 
-            rwkTxtString("CHECK DEALERSHIP "+ typeName, false, false);
+            String reference_marque = rwkTxtString(rwkReference(marque, 2), false, true);
+            String reference_model = rwkTxtString(rwkReference(modele, 2), false, true);
+            String reference_date = rwkDateTime("", "5", "", ":", "-");
+
+            rwkTxtString("CHECK DEALERSHIP reference_marque "+ reference_marque, false, false);
+            rwkTxtString("CHECK DEALERSHIP reference_model "+ reference_model, false, false);
+
+            boolean condition = rwkTxtBoolean("Est-il neuf ?", true);
+            int kilometrage = rwkTxtInt("Quel est son kilométrage (en km) ?");
+
+            // réduction de 10% si occasion
+            price = rwkOperatorV2("", false, 10, "-%", "", price);
+
             typeName = addProductType(types);
-            rwkTxtString("Marque : "+marque + " | Modèle : " + modele+" | ", false, false);
+            price =+ rwkCountColor(0, typeName);
 
-            boolean condition = false;
-            int kilometrage = 0;
-
-            add_item = "[code : LAAV-2025-06-30] | Marque : "+marque+" | Modele "+modele+" | Neuf : "+condition+" | Kilométrage : "+kilometrage+" | Couleur : "+typeName+" | Prix total : "+String.format("%.2f", price);
+            add_item = "[code : "+reference_marque+reference_model+"-"+reference_date+"] | ID("+index+")| Marque : "+marque+" | Modele : "+modele+" | Neuf : "+condition+" | Kilométrage : "+kilometrage+" | Couleur : "+typeName+" | Prix total : "+String.format("%.2f", price);
         }
 
-        if (sector == "ALIMENTARY" || sector == "ECOMMERCE"){
+        if ("ALIMENTARY".equals(sector) || "ECOMMERCE".equals(sector)){
             name                 = rwkTxtString("Veuillez mettre le nom de l'article", true, false);
             typeName             = addProductType(types);
             //String test_date            = rwkDateTime("Veuillez mettre la date de fabrication ", "1", "");
             //String test_time            = rwkDateTime("Veuillez mettre l'heure et minute de fabrication ", "2", "");
             //String date_manufacturing   = test_date+" "+test_time; //fonctionnel
-            date_manufacturing   = rwkDateTime("Veuillez mettre la date de fabrication ", "1", "");
+            date_manufacturing   = rwkDateTime("Veuillez mettre la date de fabrication ", "1", "", ":", "/");
         }
         
         String date_expiration = ""; String date_expiration_txt = ""; String date_check = date_manufacturing;
         if ("ALIMENTARY".equals(sector)){//Demande la date de péremption si alimentaire
-            date_expiration      = rwkDateTime("Veuillez mettre la date de péremption ", "1", "");
+            date_expiration      = rwkDateTime("Veuillez mettre la date de péremption ", "1", "", ":", "/");
             date_expiration_txt = "Date de péremption : "+date_expiration+" | ";
             date_check = date_expiration;
         }
         
         String consumable = ""; boolean isOnSale; 
-        if (sector == "ALIMENTARY" || sector == "ECOMMERCE"){
+        if ("ALIMENTARY".equals(sector) || "ECOMMERCE".equals(sector)){
             price               = rwkOperator("Prix de base : ", "=", 0);
             consumable          = " | "+rwkCheckdate(date_check, duration, unit, sector); // checking de la limite de date
             isOnSale            = rwkTxtBoolean("En solde ? (OUI/NON)", true);
@@ -283,9 +315,9 @@ public class myfunctions {
         return formattedDate;
     }
 
-    public static String rwkDateTime(String prompt, String operator, String result){ 
+    public static String rwkDateTime(String prompt, String operator, String result, String fh, String fd){ 
         try{
-            String time_txt = "HH:mm"; String date_txt = "dd/MM/yyyy";
+            String time_txt = "HH"+fh+"mm"; String date_txt = "dd"+fd+"MM"+fd+"yyyy";
             DateTimeFormatter formatter;
             switch(operator){
                 case "1": //add date and not time
@@ -293,25 +325,33 @@ public class myfunctions {
                 String date_string = rwkTxtString(prompt +" (format JJ/MM/AAAA)", true, false);
                 //checking format date
                 LocalDate.parse(date_string, formatter); // check si bien format date
-                result = date_string; break;
+                result = date_string; 
+                break;
 
                 case "2":  //add time and not date
                 formatter = DateTimeFormatter.ofPattern(time_txt);
                 String time_string = rwkTxtString(prompt +" (format HH:MM)", true, false);
                 LocalTime.parse(time_string, formatter); // check si bien format time
-                result = time_string; break;
+                result = time_string; 
+                break;
 
                 case "3":  //collate date and time
-                rwkTxtString("à voir plus tard", false, false); break;
+                rwkTxtString("à voir plus tard", false, false); 
+                break;
 
                 case "4":  //releases date in EU
                 formatter = DateTimeFormatter.ofPattern(time_txt+" "+date_txt);
                 LocalDateTime date_time = LocalDateTime.parse(result, formatter);
                 String formattedDate = date_time.format(formatter);
                 System.out.println("Date d'aujourd'hui format Francophone: " + formattedDate);
-                result = formattedDate; break;
+                result = formattedDate; 
+                break;
 
-                //case "5":
+                case "5": //get date reel now
+                formatter = DateTimeFormatter.ofPattern(date_txt);
+                LocalDateTime now = LocalDateTime.now();
+                result = now.format(formatter); 
+                break;
 
                 // voir d'autres options comme prendre le temps et l'afficher en string
                 // voir pour ajouter d'autres options comme ajouter soit un an, un jour ect
@@ -322,7 +362,7 @@ public class myfunctions {
             return result;
         }catch (Exception e){
             Exceptioner.TxtException(e, 0);
-            return rwkDateTime(prompt, operator, result);
+            return rwkDateTime(prompt, operator, result, fh, fd);
         }
     }
 
@@ -393,12 +433,18 @@ public class myfunctions {
         System.out.print(prompt+"\n");
         if(keyboard){
             if(touppercase){
+                //System.out.print(prompt+"test 01");
                 return sc.nextLine().toUpperCase(); //transform all maj
+                }else{
+                    //System.out.print(prompt+"test 02 ");
+                    return sc.next();
+                }
+            }else if(touppercase){
+                //System.out.print(prompt+"test 03 ");
+                return prompt.toUpperCase(); //return exclusive text all maj
             }else{
-                return sc.next();
-            }
-        } else {
-            return prompt; //return exclusive text
+                //System.out.print(prompt+"test 04 ");
+            return prompt; //return exclusive text normalize
         }
     }
     public static boolean rwkTxtBoolean(String prompt, boolean convert){ 
