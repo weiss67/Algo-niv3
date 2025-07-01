@@ -49,6 +49,13 @@ public class exo_09 {
         String mail = rwkTxt(true, "Votre adresse mail ?");
         String createmdp = rwkTxt(true, "Votre mot de passe ?");
         String checkmdp = rwkTxt(true, "Confirmer votre mot de passe ?");
+
+        if (checkmdp.equals(createmdp)) {
+        rwkTxt(false, "succes_txt");
+        } else { 
+            rwkTxt(false, "refused_txt");
+            return rwkSignUp();
+        }
         return new String[]{firstname, lastname, mail, createmdp, checkmdp};
     }
 
@@ -62,16 +69,34 @@ public class exo_09 {
         return txt;
     }
 
+    public static String rwkCheckMail(String mail, String txt_connexion, String txt_succes, String txt_refused){
+        String checkmail = rwkTxt(true, txt_connexion);
+        if (checkmail.equals(mail)) {
+            //rwkTxt(false, txt_succes);
+            return txt_succes;
+        } else { 
+            rwkTxt(false, txt_refused);
+            return rwkCheckMail(mail, txt_connexion, txt_succes, txt_refused);
+        }
+    }
+
+
+
     public static String rwkSignIn(String checkmdp, String mail, String conexion_txt, String psw_txt, String connexion_succes, String connexion_refused){
         String txt = "";
-
         String checkmail = rwkTxt(true, conexion_txt);
-        String checkmdp2 = rwkTxt(true, psw_txt);
-
-        if (checkmdp2.equals(checkmdp) && checkmail.equals(mail)) {
+        if (checkmail.equals(mail)) {
             rwkTxt(false, connexion_succes);
         } else { 
             rwkTxt(false, connexion_refused);
+            return rwkSignIn(checkmdp, mail, conexion_txt, psw_txt, connexion_succes, connexion_refused);
+        }
+        String checkmdp2 = rwkTxt(true, psw_txt);
+        if (checkmdp2.equals(checkmdp)) {
+            rwkTxt(false, connexion_succes);
+        } else { 
+            rwkTxt(false, connexion_refused);
+            return rwkSignIn(checkmdp, mail, conexion_txt, psw_txt, connexion_succes, connexion_refused);
         }
         return txt;
     }
@@ -91,9 +116,19 @@ public class exo_09 {
         String createmdp = userData[3];
         String checkmdp = userData[4];
 
-        rwkTxt(false, rwkChecking(checkmdp, createmdp, "Merci "+ firstname +" "+ lastname +" , votre inscription a bien été effectuée, vous recevrez un mail de confirmation à l'adresse : "+ mail, "Inscription annulée"));
+        //rwkTxt(false, rwkChecking(checkmdp, createmdp, "Merci "+ firstname +" "+ lastname +" , votre inscription a bien été effectuée, vous recevrez un mail de confirmation à l'adresse : "+ mail, "Inscription annulée"));
 
-        rwkSignIn(checkmdp, mail, "Pour vous connecter, renseignez votre email ?", "Renseignez votre mot de passe ?", "Connexion réussie", "Connexion refusée");
+        String mail_connexion = "Pour vous connecter, renseignez votre email ?";
+        String mail_succes = "L'e-mail entré est bien associé à un compte";
+        String mail_refused = "L'e-mail entré n'est pas associé à un compte";
+        rwkTxt(false, rwkCheckMail(mail, mail_connexion, mail_succes, mail_refused));
+
+        String mdp_connexion = "Pour vous connecter, renseignez votre email ?";
+        String mdp_succes = "L'e-mail entré est bien associé à un compte";
+        String mdp_refused = "L'e-mail entré n'est pas associé à un compte";
+        rwkTxt(false, rwkCheckMail(mail, mdp_connexion, mdp_succes, mdp_refused));
+
+        //rwkSignIn(checkmdp, mail, "Pour vous connecter, renseignez votre email ?", "Renseignez votre mot de passe ?", "Connexion réussie", "Connexion refusée");
 
         sc.close();
     }

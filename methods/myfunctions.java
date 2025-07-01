@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList; //import d'un outil pour comparer entre dates
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class myfunctions {
@@ -19,7 +20,7 @@ public class myfunctions {
         return result;
     }
 
-    public static String rwkCheckdate(String date_string, int duration, ChronoUnit unit, boolean alimentary){
+    public static String rwkCheckdate(String date_string, int duration, ChronoUnit unit, String sector){
         //ChronoUnit.DAYS or ChronoUnit.MONTHS or ChronoUnit.YEARS
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -28,7 +29,7 @@ public class myfunctions {
         LocalDate now = LocalDate.now();
         long difference;
 
-        if(alimentary){
+        if(sector == "ALIMENTARY"){
             difference = unit.between(now, local_date);
         }else{
             difference = unit.between(local_date, now);
@@ -39,11 +40,11 @@ public class myfunctions {
         
         //rwkTxtString(difference+" >= "+duration, false, false);
 
-        if(alimentary && (difference < 0)){ // si au dessous du 0, évite des -1 ou moins
+        if(sector == "ALIMENTARY" && (difference < 0)){ // si au dessous du 0, évite des -1 ou moins
             //rwkTxtString("TEST 1 | Différence de "+ difference, false, false);
             //result = "Périmée"; //fonctionnel
             result = "EXPIRED";
-        }else if( (alimentary && (difference <= duration)) || (!alimentary && (difference >= duration))){
+        }else if( (sector == "ALIMENTARY" && (difference <= duration)) || (sector == "ECOMMERCE" && (difference >= duration))){
             //rwkTxtString("TEST 2 LIMITED", false, false);
             //result = "Consommable (Périme bientôt !!!)";
             result = "LIMITED";
@@ -113,27 +114,93 @@ public class myfunctions {
         return typeName;
     }
 
-    public static ArrayList<String> rwkAddItem(ArrayList<String> tableau, int index, String[] types, boolean alimentary, int duration, ChronoUnit unit, int onsale, int reduce){
-        String name                 = rwkTxtString("Veuillez mettre le nom de l'article", true, false);
-        String typeName             = addProductType(types);
-        //String test_date            = rwkDateTime("Veuillez mettre la date de fabrication ", "1", "");
-        //String test_time            = rwkDateTime("Veuillez mettre l'heure et minute de fabrication ", "2", "");
-        //String date_manufacturing   = test_date+" "+test_time; //fonctionnel
-        String date_manufacturing   = rwkDateTime("Veuillez mettre la date de fabrication ", "1", "");
+    public static String[] addProductTypeTest(String[][] type) {
+        
+        String[] autos_volkswagen   = type[0];
+        String[] autos_audi         = type[1]; 
+        String[] autos_porsche      = type[2];
+        String[] autos_lamborghini  = type[3];
+
+        String[] result = new String[2]; // [0] = marque, [1] = modèle
+
+        String typeName = "";
+        try {
+        System.out.println("Quel est sa marque, choissisez son numéro :");
+        for (int i = 0; i < type.length; i++) {
+            System.out.println(""+ (i + 1) +" - "+ type[i][0]);
+        }
+        int typeChoice = rwkTxtInt("");
+            typeName = type[typeChoice - 1][0];
+            System.out.println("Vous avez choisi la marque : " + typeName);
+
+            System.out.println("\nQuel est son modèle, choissisez son numéro :");
+            String[] models = Arrays.copyOfRange(type[typeChoice - 1], 1, type[typeChoice - 1].length);
+        for (int i = 0; i < models.length; i++) {
+            System.out.println("(" + (i + 1) + "). " + models[i]);
+        }
+        
+        int modelChoice = rwkTxtInt("");
+        String selectedModel = models[modelChoice - 1];
+        System.out.println("Vous avez choisi le modèle : " + selectedModel);
+        
+        result[0] = typeName;
+        result[1] = selectedModel;
+
+        return result;
+
+        } catch (Exception e) {
+            Exceptioner.TxtException(e, type.length);
+            addProductTypeTest(type);
+        }
+        return result;
+    }
+
+    public static ArrayList<String> rwkAddItem(ArrayList<String> tableau, int index, String[] types, String sector, int duration, ChronoUnit unit, int onsale, int reduce, String[][] all_categorys){
+        
+        String name = ""; String typeName = ""; String date_manufacturing = ""; String[] choix; double price = 0.0; String add_item = "";
+
+        if ("DEALERSHIP".equals(sector)){
+            rwkTxtString("Vous voulez ajouter une voiture, très bien.", false, false);
+            choix             = addProductTypeTest(all_categorys);
+
+            String marque = choix[0];
+            String modele = choix[1];
+
+            rwkTxtString("CHECK DEALERSHIP "+ typeName, false, false);
+            typeName = addProductType(types);
+            rwkTxtString("Marque : "+marque + " | Modèle : " + modele+" | ", false, false);
+
+            boolean condition = false;
+            int kilometrage = 0;
+
+            add_item = "[code : LAAV-2025-06-30] | Marque : "+marque+" | Modele "+modele+" | Neuf : "+condition+" | Kilométrage : "+kilometrage+" | Couleur : "+typeName+" | Prix total : "+String.format("%.2f", price);
+        }
+
+        if (sector == "ALIMENTARY" || sector == "ECOMMERCE"){
+            name                 = rwkTxtString("Veuillez mettre le nom de l'article", true, false);
+            typeName             = addProductType(types);
+            //String test_date            = rwkDateTime("Veuillez mettre la date de fabrication ", "1", "");
+            //String test_time            = rwkDateTime("Veuillez mettre l'heure et minute de fabrication ", "2", "");
+            //String date_manufacturing   = test_date+" "+test_time; //fonctionnel
+            date_manufacturing   = rwkDateTime("Veuillez mettre la date de fabrication ", "1", "");
+        }
         
         String date_expiration = ""; String date_expiration_txt = ""; String date_check = date_manufacturing;
-        if (alimentary){ //Demande la date de péremption si alimentaire
+        if ("ALIMENTARY".equals(sector)){//Demande la date de péremption si alimentaire
             date_expiration      = rwkDateTime("Veuillez mettre la date de péremption ", "1", "");
             date_expiration_txt = "Date de péremption : "+date_expiration+" | ";
             date_check = date_expiration;
         }
         
-        double price                = rwkOperator("Prix de base : ", "=", 0);
-        String consumable           = rwkCheckdate(date_check, duration, unit, alimentary); // checking de la limite de date
-        boolean isOnSale            = rwkTxtBoolean("En solde ? (OUI/NON)", true);
-        price                       = rwkSwitchCasePrice(consumable, price, isOnSale, onsale, reduce); // modification du prix en fonction de la date
-        
-        String add_item = "("+index+") Nom : "+name+"\nType de produit : "+typeName+" | Date de fabrication : "+date_manufacturing+" | "+date_expiration_txt+"Prix : "+String.format("%.2f", price)+" | "+consumable;
+        String consumable = ""; boolean isOnSale; 
+        if (sector == "ALIMENTARY" || sector == "ECOMMERCE"){
+            price               = rwkOperator("Prix de base : ", "=", 0);
+            consumable          = " | "+rwkCheckdate(date_check, duration, unit, sector); // checking de la limite de date
+            isOnSale            = rwkTxtBoolean("En solde ? (OUI/NON)", true);
+            price               = rwkSwitchCasePrice(consumable, price, isOnSale, onsale, reduce); // modification du prix en fonction de la date
+            add_item = "("+index+") Nom : "+name+"\nType de produit : "+typeName+" | Date de fabrication : "+date_manufacturing+" | "+date_expiration_txt+"Prix : "+String.format("%.2f", price)+consumable;
+        }
+
         tableau.add(index, add_item);
         rwkTxtString("Produit ajouté avec succès ! "+add_item, false, false);
         return tableau;
@@ -165,7 +232,7 @@ public class myfunctions {
         // }
         boolean found = false;
         for (String item : tableau) {
-            if (item.contains("Nom : " + search)) { // Cherche "Nom : [recherche]" dans la chaîne
+            if (item.contains(search)) { // Cherche "Nom : [recherche]" dans la chaîne
                 rwkTxtString("Produit trouvé :" + item, false, false);
                 found = true;
                 break;
@@ -177,21 +244,26 @@ public class myfunctions {
         return tableau;
     }
 
-    // voir pour en faire une V2 ou V3 qui permet d'ajouter des options nous même
-    public static ArrayList<String> rwkSwitchCase(ArrayList<String> tableau, int index, String[] types, boolean alimentary, int duration, ChronoUnit unit, int onsale, int reduce){
+    public static ArrayList<String> rwkSwitchCase(
+        ArrayList<String> tableau, 
+        int index, String[] types, 
+        String sector, int duration, 
+        ChronoUnit unit, int onsale, int reduce,
+        String[][] vehicles_autos
+        ){
         String option = rwkTxtString("Voulez-vous ? (A) Ajouter un nouvel article | (B) Supprimer un article | (Y) Chercher un article | (W) Afficher la liste d'articles | (X) Quitter", true, true);
         switch(option){// voir pour faire des nouvelles functions assez indépendants pour utiliser en tout
-            case "A": tableau = rwkAddItem(tableau, index, types, alimentary, duration, unit, onsale, reduce); 
-            return rwkSwitchCase(tableau, index + 1, types, alimentary, duration, unit, onsale, reduce); //relance le tableau de proposition avec index ajouté
+            case "A": tableau = rwkAddItem(tableau, index, types, sector, duration, unit, onsale, reduce, vehicles_autos); 
+            return rwkSwitchCase(tableau, index + 1, types, sector, duration, unit, onsale, reduce, vehicles_autos); //relance le tableau de proposition avec index ajouté
             case "B": tableau = rwkRmvItemViaIndex(tableau, index);
-            return rwkSwitchCase(tableau, index, types, alimentary, duration, unit, onsale, reduce);
+            return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, vehicles_autos);
             case "Y": rwkSrhItem(tableau, index);
-            return rwkSwitchCase(tableau, index, types, alimentary, duration, unit, onsale, reduce);
+            return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, vehicles_autos);
             case "W": rwkLoopArraysList(tableau);
-            return rwkSwitchCase(tableau, index, types, alimentary, duration, unit, onsale, reduce);
+            return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, vehicles_autos);
             case "X": rwkTxtString("Merci au revoir ! ", false, false); break;
             default: rwkTxtString("Veuillez répondre que par (A), (B), (Y) ou (X)", false, true); 
-            return rwkSwitchCase(tableau, index, types, alimentary, duration, unit, onsale, reduce); //relancement de sécurité
+            return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, vehicles_autos); //relancement de sécurité
         }
         return tableau;
     }

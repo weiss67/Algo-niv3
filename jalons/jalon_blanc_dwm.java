@@ -7,7 +7,7 @@ import methods.myfunctions;
 public class jalon_blanc_dwm {
     public static void main(String[] args) {
 
-    boolean alimentary = true;
+    String sector = "ALIMENTARY";
     ChronoUnit unit = ChronoUnit.DAYS; // Quel type de temps ?
     int duration = 3; // Nombre en unité temps
     int onsale = 0; //% en solde
@@ -17,6 +17,6 @@ public class jalon_blanc_dwm {
     //myfunctions.rwkLoopArrays(types);
     int index = 0;
     ArrayList<String> inventory = new ArrayList<>();
-    inventory = myfunctions.rwkSwitchCase(inventory, index, types, alimentary, duration, unit, onsale, reduce);
+    inventory = myfunctions.rwkSwitchCase(inventory, index, types, sector, duration, unit, onsale, reduce, null);
     }
 }
