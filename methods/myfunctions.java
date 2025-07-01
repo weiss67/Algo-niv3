@@ -188,13 +188,15 @@ public class myfunctions {
 
             String marque = choix[0];
             String modele = choix[1];
-
-            String reference_marque = rwkTxtString(rwkReference(marque, 2), false, true);
-            String reference_model = rwkTxtString(rwkReference(modele, 2), false, true);
+            // voir pour faire un return en MAJ sans txtstring
+            //String reference_marque = rwkTxtStringV2(rwkReference(marque, 2), false, true);
+            //String reference_model = rwkTxtStringV2(rwkReference(modele, 2), false, true);
+            String reference_marque = rwkReference(marque, 2);
+            String reference_model = rwkReference(modele, 2);
             String reference_date = rwkDateTime("", "5", "", ":", "-");
 
-            rwkTxtString("CHECK DEALERSHIP reference_marque "+ reference_marque, false, false);
-            rwkTxtString("CHECK DEALERSHIP reference_model "+ reference_model, false, false);
+            rwkTxtStringV2("CHECK DEALERSHIP reference_marque "+ reference_marque, false, false);
+            rwkTxtStringV2("CHECK DEALERSHIP reference_model "+ reference_model, false, false);
 
             boolean condition = rwkTxtBoolean("Est-il neuf ?", true);
             int kilometrage = rwkTxtInt("Quel est son kilométrage (en km) ?");
@@ -447,6 +449,18 @@ public class myfunctions {
             return prompt; //return exclusive text normalize
         }
     }
+    public static String rwkTxtStringV2(String prompt, boolean keyboard, boolean touppercase){ 
+        Scanner sc = new Scanner(System.in);
+        System.out.print(prompt+"\n");
+        // Si clavier innatendu
+        if(!keyboard){
+            // retourne en MAJ si touppercase true ou en normal
+            return touppercase ? prompt.toUpperCase() : prompt;
+        }
+        String imput = sc.nextLine();
+        return touppercase ? imput.toUpperCase() : imput;
+    }
+
     public static boolean rwkTxtBoolean(String prompt, boolean convert){ 
         try{
             Scanner sc = new Scanner(System.in); 
