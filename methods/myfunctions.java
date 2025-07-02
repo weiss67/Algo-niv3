@@ -1,15 +1,28 @@
 package methods;
 
+import jalons.MainJalonGreenCda;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList; //import d'un outil pour comparer entre dates
+import java.time.temporal.ChronoUnit; //import d'un outil pour comparer entre dates
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
 public class myfunctions {
+
+    public static class Types {
+        public final String type_txt;
+        public final String type_code;
+        public final double type_price;
+
+        public Types(String txt, String code, double price) {
+            this.type_txt = txt;
+            this.type_code = code;
+            this.type_price = price;
+        }
+    }
 
     public static Object[] rwkSignUp(boolean identity, boolean age, boolean account){
         String firstname = ""; String lastname = ""; int years = 0; String mail = ""; String createmdp = ""; String checkmdp = "";
@@ -20,6 +33,7 @@ public class myfunctions {
         if (age){
             years = rwkTxtInt("Quel est votre âge ?");
         }
+        // voir aussi pour jaouter son anniversaire
         if(account){
             mail = rwkTxtStringV2("Votre adresse mail ?", true, false);
             createmdp = rwkTxtStringV2("Votre mot de passe ?", true, false);
@@ -77,14 +91,6 @@ public class myfunctions {
             //result = "Consommable";
             result = "VALIDATED";
         }
-
-        // if(!alimentary && (difference >= duration)){
-        //     rwkTxtString("TEST 2 LIMITED", false, false);
-        //     //result = "Consommable (Périme bientôt !!!)";
-        //     result = "LIMITED";
-        // }else{
-        //     result = "VALIDATED";
-        // }
 
         return result;
     }
@@ -249,6 +255,10 @@ public class myfunctions {
         
         String name = ""; String typeName = ""; String date_manufacturing = ""; String[] choix; double price = 0.0; String add_item = "";
         if ("MEDICAL_OFFICE".equals(sector)){
+
+            myfunctions.Types premierService = MainJalonGreenCda.TYPES.get(0);
+        
+            rwkTxtStringV2(""+premierService.type_txt, false, false);
 
             Object[] userData = rwkSignUp(true, true, false);
             // Extraction des valeurs
@@ -609,7 +619,7 @@ public class myfunctions {
             return rwkCalculator(prompt, result, add, pct);
         }
     }
-    
+
     public static double rwkOperatorV2(String prompt, boolean scanner, double dft, String operator, String notif, double result){ 
         try{
             Scanner sc = new Scanner(System.in);

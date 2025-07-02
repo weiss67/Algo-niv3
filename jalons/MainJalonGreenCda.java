@@ -2,9 +2,22 @@ package jalons;
 
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import methods.myfunctions;
 
-public class jalon_vert_cda {
+public class MainJalonGreenCda {
+
+    // configuration des services, codes et prix (à voir aussi dans dealership)
+    public static final List<myfunctions.Types> TYPES = Arrays.asList(
+        new myfunctions.Types("Bilan de santé",        "BS", 120),
+        new myfunctions.Types("Cardiologie",           "CD", 200),
+        new myfunctions.Types("Vaccination",           "VC", 0),
+        new myfunctions.Types("Certification médical", "CM", 120),
+        new myfunctions.Types("Général",               "GN", 70),
+        new myfunctions.Types("Suivi médical",         "SM", 60)
+    );
+
     public static void main(String[] args) {
 
     String sector = "MEDICAL_OFFICE";
@@ -14,12 +27,12 @@ public class jalon_vert_cda {
     int reduce = 60; //% en prise de charge par défaut
 
     String[] types = {
-        "Bilan de santé (Code BS, prix : 120 euros)", 
-        "Cardiologie (Code CD, prix : 200 euros)", 
-        "Vaccination (Code VC, gratuit)", 
-        "Certification médical (Code CM, prix : 120 euros)",
-        "Général (Code GN, prix : 70 euros)",
-        "Suivi médical (Code SM, prix : 60 euros)",
+        "Bilan de santé", 
+        "Cardiologie", 
+        "Vaccination", 
+        "Certification médical",
+        "Général",
+        "Suivi médical",
     };
 
     String[][] vehicles_autos = {
