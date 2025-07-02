@@ -145,30 +145,22 @@ public class myfunctions {
         return typeName;
     }
 
-    public static Object rwkTypes() {
+    public static Object rwkTypes() {// nouvelle fonction qui permet de lister et selectionner puis retourner plusieurs valeurs
+        String type = ""; String code = ""; double price = 0;
             // myfunctions.Types premierService = MainJalonGreenCda.TYPES.get(0);
             // rwkTxtStringV2(""+premierService.type_txt, false, false);
         try {
-            int i;
-            myfunctions.Types service = MainJalonGreenCda.TYPES.get(i);
-            for (i = 0; i < MainJalonGreenCda.TYPES.size(); i++) {
+            for (int i = 0; i < MainJalonGreenCda.TYPES.size(); i++) {
+                myfunctions.Types service = MainJalonGreenCda.TYPES.get(i);
                 rwkTxtStringV2("Service " + (i+1) + ": " +service.type_txt+" | Code : "+service.type_code+" | Prix : "+ service.type_price, false, false);
             }
+            
+            int choice = rwkTxtInt("Veuillez choisir votre type de produit :");
 
-
-
-        // Implémentez la logique pour ajouter un produit avec son type
-        // Par exemple, vous pouvez créer une nouvelle entrée dans la liste avec le type du produit
-        String type = ""; String code = ""; double price = 0;
-        //try {
-        //rwkTxtString("Type de produit :", false, false);
-        //for (int i = 0; i < type_txt.length; i++) {
-            //System.out.println("(" + (i + 1) + "). " + type_txt[i]);
-        //}
-        int choice = rwkTxtInt("Veuillez choisir votre type de produit :");
-            type = service.type_txt[choice - 1];
-            code = type_code[choice - 1];
-            price = type_price[choice - 1];
+            myfunctions.Types selectedservice = MainJalonGreenCda.TYPES.get(choice - 1);
+            type = selectedservice.type_txt;
+            code = selectedservice.type_code;
+            price = selectedservice.type_price;
             rwkTxtString("Type de produit choisi : " + type+" | Code : "+code+" | Prix : "+price, false, false);
         } catch (Exception e) {
             Exceptioner.TxtException(e, MainJalonGreenCda.TYPES.size(), ""); // limite de la liste
