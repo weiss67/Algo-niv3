@@ -3,11 +3,11 @@ package methods;
 
 public class Exceptioner {
 
-    public static void TxtException(Exception e, int total) {
+    public static void TxtException(Exception e, int total, String txt){
         String errorType = e.getClass().getSimpleName(); // Récupère le nom simple de l'exception
         String errorMessage = e.getMessage(); // Récupère le message d'erreur
         String err = "Erreur : ";
-        String messageErr="";
+        String messageErr= "";
  
         switch (errorType) {
             case "InputMismatchException":
@@ -34,7 +34,7 @@ public class Exceptioner {
                 messageErr = err+"Conversion numérique impossible";
                 break;
             case "DateTimeParseException":
-                messageErr = err+"Date invalide | Format attendu (JJ/MM/AAAA ou/et HH:MM)";
+                messageErr = err+"Date invalide | Format attendu ("+txt+")";
                 break;
             default:
                 messageErr = err+"inconnue : " + errorMessage;
