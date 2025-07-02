@@ -74,7 +74,7 @@ public class myfunctions {
             //case "Consommable (Périme bientôt !!!)": 
             case "LIMITED":
             //rwkTxtString("CHECK rwkSwitchCasePrice 1 "+price, false, false);
-            int discount;
+            double discount;
             if (isOnSale) {
                 //discount = 40;
                 discount = onsale;
@@ -118,22 +118,44 @@ public class myfunctions {
         try {// function qui permet de réduire le mot souhaité au nombre de caractère demandé
             if (reference.length() <= reduct){
                 return reference;}// si déjà en 2 caractères, retourn directement sans modif
-            return reference.substring(0, reduct);
+            return reference.toUpperCase().substring(0, reduct);
         } catch (Exception e) {
             Exceptioner.TxtException(e, 0);
             rwkReference(reference, reduct);
         }
         return reference;
-    }    
+    }
     
     public static Double rwkCountColor(double count, String color) {
-        switch(color){// voir pour faire des nouvelles functions assez indépendants pour utiliser en tout
-            case "Blanc": return count+500; //relance le tableau de proposition avec index ajouté
+        switch(color){
+            case "Blanc": return count+500;
             case "Noir": return count+0;
             case "Rouge": return count+2000;
             case "Bleu": return count+1000;
-            default: rwkTxtString("Veuillez répondre que par (A), (B), (Y) ou (X)", false, true); 
+            default: rwkTxtString("Error rwkCountColor()", false, true); 
             return rwkCountColor(count, color); //relancement de sécurité
+        }
+    }
+
+    public static Double rwkCountVehicles(double count, String vehicle) {
+        switch(vehicle){
+            //VOLKSWAGEN
+            case "Golf": return count+29000;
+            case "Tiguan": return count+36000;
+            case "Polo": return count+23000;
+            //AUDI
+            case "A3": return count+34000;
+            case "Q5": return count+54000;
+            case "A4": return count+43000;
+            //PORSCHE
+            case "Macan": return count+70000;
+            case "911 Carrera": return count+120000;
+            //LAMBORGHINI
+            case "Aventador": return count+520000;
+            case "Huracan": return count+260000;
+
+            default: rwkTxtString("Error rwkCountVehicles()", false, true); 
+            return rwkCountColor(count, vehicle); //relancement de sécurité
         }
     }
 
@@ -186,26 +208,33 @@ public class myfunctions {
             rwkTxtString("Vous voulez ajouter une voiture, très bien.", false, false);
             choix = addProductTypeTest(all_categorys);
 
-            String marque = choix[0];
-            String modele = choix[1];
-            // voir pour faire un return en MAJ sans txtstring
-            //String reference_marque = rwkTxtStringV2(rwkReference(marque, 2), false, true);
-            //String reference_model = rwkTxtStringV2(rwkReference(modele, 2), false, true);
+            String marque = choix[0];// récupère la marque en 1er
+            String modele = choix[1];// récupère le modèle en 2ème
             String reference_marque = rwkReference(marque, 2);
             String reference_model = rwkReference(modele, 2);
             String reference_date = rwkDateTime("", "5", "", ":", "-");
 
-            rwkTxtStringV2("CHECK DEALERSHIP reference_marque "+ reference_marque, false, false);
-            rwkTxtStringV2("CHECK DEALERSHIP reference_model "+ reference_model, false, false);
+            //Mets le prix du model dans le catalogue
+            price += rwkCountVehicles(price, modele);
+            rwkTxtString("price after rwkCountVehicles "+ price, false, false);
 
             boolean condition = rwkTxtBoolean("Est-il neuf ?", true);
             int kilometrage = rwkTxtInt("Quel est son kilométrage (en km) ?");
 
-            // réduction de 10% si occasion
-            price = rwkOperatorV2("", false, 10, "-%", "", price);
+            if(kilometrage > 200000){ // au dessous des 200 000 km
+                price = rwkOperatorV2("", false, reduce, "-%", "", price);
+                rwkTxtString("Réduction de 50% pour kilométrage au dessus des 200 000 KM", false, false);
+            }else if(kilometrage > 100000){ // entre 100 000 et 200 000 km
+                price = rwkOperatorV2("", false, onsale, "-%", "", price);
+                rwkTxtString("Réduction de 25% pour kilométrage entre 100 000 et 200 000 KM", false, false);
+            }else if(!condition){ // occasion si condition = false
+                price = rwkOperatorV2("", false, 10, "-%", "", price);
+                rwkTxtString("Réduction de 10% appliqué pour occasion", false, false);
+            }
+            rwkTxtString("price after rwkOperatorV2 "+ price, false, false);
 
-            typeName = addProductType(types);
-            price =+ rwkCountColor(0, typeName);
+            // Choix de couleur
+            typeName = addProductType(types); price += rwkCountColor(0, typeName);
 
             add_item = "[code : "+reference_marque+reference_model+"-"+reference_date+"] | ID("+index+")| Marque : "+marque+" | Modele : "+modele+" | Neuf : "+condition+" | Kilométrage : "+kilometrage+" | Couleur : "+typeName+" | Prix total : "+String.format("%.2f", price);
         }
@@ -226,13 +255,14 @@ public class myfunctions {
             date_check = date_expiration;
         }
         
-        String consumable = ""; boolean isOnSale; 
+        String consumable = ""; boolean isOnSale = false; 
         if ("ALIMENTARY".equals(sector) || "ECOMMERCE".equals(sector)){
             price               = rwkOperator("Prix de base : ", "=", 0);
-            consumable          = " | "+rwkCheckdate(date_check, duration, unit, sector); // checking de la limite de date
-            isOnSale            = rwkTxtBoolean("En solde ? (OUI/NON)", true);
+            consumable  = rwkCheckdate(date_check, duration, unit, sector); // checking de la limite de date
+            if ("ECOMMERCE".equals(sector)){ // solde pour le moment cocerné par le menu commerce
+                isOnSale            = rwkTxtBoolean("En solde ? (OUI/NON)", true);}
             price               = rwkSwitchCasePrice(consumable, price, isOnSale, onsale, reduce); // modification du prix en fonction de la date
-            add_item = "("+index+") Nom : "+name+"\nType de produit : "+typeName+" | Date de fabrication : "+date_manufacturing+" | "+date_expiration_txt+"Prix : "+String.format("%.2f", price)+consumable;
+            add_item = "("+index+") Nom : "+name+"\nType de produit : "+typeName+" | Date de fabrication : "+date_manufacturing+" | "+date_expiration_txt+"Prix : "+String.format("%.2f", price)+" | Etat : "+consumable;
         }
 
         tableau.add(index, add_item);
@@ -290,6 +320,8 @@ public class myfunctions {
             case "A": tableau = rwkAddItem(tableau, index, types, sector, duration, unit, onsale, reduce, vehicles_autos); 
             return rwkSwitchCase(tableau, index + 1, types, sector, duration, unit, onsale, reduce, vehicles_autos); //relance le tableau de proposition avec index ajouté
             case "B": tableau = rwkRmvItemViaIndex(tableau, index);
+            return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, vehicles_autos);
+            case "Q": rwkSrhItem(tableau, index);
             return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, vehicles_autos);
             case "Y": rwkSrhItem(tableau, index);
             return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, vehicles_autos);

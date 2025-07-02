@@ -2,7 +2,6 @@ package jalons;
 
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Arrays;
 import methods.myfunctions;
 
 public class jalon_vert_dwm {
