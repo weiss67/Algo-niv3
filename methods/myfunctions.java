@@ -12,6 +12,7 @@ import java.util.Scanner;
 
 public class myfunctions {
 
+    // function qui permet de lister dans configuration
     public static class Types {
         public final String type_txt;
         public final String type_code;
@@ -33,7 +34,7 @@ public class myfunctions {
         if (age){
             years = rwkTxtInt("Quel est votre âge ?");
         }
-        // voir aussi pour jaouter son anniversaire
+        // voir aussi pour ajouter son anniversaire
         if(account){
             mail = rwkTxtStringV2("Votre adresse mail ?", true, false);
             createmdp = rwkTxtStringV2("Votre mot de passe ?", true, false);
@@ -144,23 +145,34 @@ public class myfunctions {
         return typeName;
     }
 
-    public static Object rwkTypes(String []type_txt, String []type_code, double []type_price) {
+    public static Object rwkTypes() {
+            // myfunctions.Types premierService = MainJalonGreenCda.TYPES.get(0);
+            // rwkTxtStringV2(""+premierService.type_txt, false, false);
+        try {
+            int i;
+            myfunctions.Types service = MainJalonGreenCda.TYPES.get(i);
+            for (i = 0; i < MainJalonGreenCda.TYPES.size(); i++) {
+                rwkTxtStringV2("Service " + (i+1) + ": " +service.type_txt+" | Code : "+service.type_code+" | Prix : "+ service.type_price, false, false);
+            }
+
+
+
         // Implémentez la logique pour ajouter un produit avec son type
         // Par exemple, vous pouvez créer une nouvelle entrée dans la liste avec le type du produit
         String type = ""; String code = ""; double price = 0;
-        try {
-        rwkTxtString("Type de produit :", false, false);
-        for (int i = 0; i < type_txt.length; i++) {
-            System.out.println("(" + (i + 1) + "). " + type_txt[i]);
-        }
+        //try {
+        //rwkTxtString("Type de produit :", false, false);
+        //for (int i = 0; i < type_txt.length; i++) {
+            //System.out.println("(" + (i + 1) + "). " + type_txt[i]);
+        //}
         int choice = rwkTxtInt("Veuillez choisir votre type de produit :");
-            type = type_txt[choice - 1];
+            type = service.type_txt[choice - 1];
             code = type_code[choice - 1];
             price = type_price[choice - 1];
             rwkTxtString("Type de produit choisi : " + type+" | Code : "+code+" | Prix : "+price, false, false);
         } catch (Exception e) {
-            Exceptioner.TxtException(e, type_txt.length, "");
-            rwkTypes(type_txt, type_code, type_price);
+            Exceptioner.TxtException(e, MainJalonGreenCda.TYPES.size(), ""); // limite de la liste
+            rwkTypes();
         }
         return new Object[]{type, code, price};
     }
@@ -256,9 +268,14 @@ public class myfunctions {
         String name = ""; String typeName = ""; String date_manufacturing = ""; String[] choix; double price = 0.0; String add_item = "";
         if ("MEDICAL_OFFICE".equals(sector)){
 
-            myfunctions.Types premierService = MainJalonGreenCda.TYPES.get(0);
-        
-            rwkTxtStringV2(""+premierService.type_txt, false, false);
+            //fonctionnel
+            // myfunctions.Types premierService = MainJalonGreenCda.TYPES.get(0);
+            // rwkTxtStringV2(""+premierService.type_txt, false, false);
+
+            for (int i = 0; i < MainJalonGreenCda.TYPES.size(); i++) {
+                myfunctions.Types service = MainJalonGreenCda.TYPES.get(i);
+                rwkTxtStringV2("Service " + (i+1) + ": " +service.type_txt+" | Code : "+service.type_code+" | Prix : "+ service.type_price, false, false);
+            }
 
             Object[] userData = rwkSignUp(true, true, false);
             // Extraction des valeurs
