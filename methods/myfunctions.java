@@ -10,15 +10,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
+//import static methods.MainJalonGreenCda.TYPES;
+
 public class myfunctions {
 
     // function qui permet de lister dans configuration
-    public static class Types {
+    public static class TypeSelection  {
         public final String type_txt;
         public final String type_code;
         public final double type_price;
 
-        public Types(String txt, String code, double price) {
+        public TypeSelection (String txt, String code, double price) {
             this.type_txt = txt;
             this.type_code = code;
             this.type_price = price;
@@ -145,19 +147,19 @@ public class myfunctions {
         return typeName;
     }
 
-    public static Object rwkTypes() {// nouvelle fonction qui permet de lister et selectionner puis retourner plusieurs valeurs
+    public static TypeSelection rwkTypes() {// nouvelle fonction qui permet de lister et selectionner puis retourner plusieurs valeurs
         String type = ""; String code = ""; double price = 0;
             // myfunctions.Types premierService = MainJalonGreenCda.TYPES.get(0);
             // rwkTxtStringV2(""+premierService.type_txt, false, false);
         try {
             for (int i = 0; i < MainJalonGreenCda.TYPES.size(); i++) {
-                myfunctions.Types service = MainJalonGreenCda.TYPES.get(i);
+                TypeSelection  service = MainJalonGreenCda.TYPES.get(i);
                 rwkTxtStringV2("Service " + (i+1) + ": " +service.type_txt+" | Code : "+service.type_code+" | Prix : "+ service.type_price, false, false);
             }
             
             int choice = rwkTxtInt("Veuillez choisir votre type de produit :");
 
-            myfunctions.Types selectedservice = MainJalonGreenCda.TYPES.get(choice - 1);
+            TypeSelection  selectedservice = MainJalonGreenCda.TYPES.get(choice - 1);
             type = selectedservice.type_txt;
             code = selectedservice.type_code;
             price = selectedservice.type_price;
@@ -166,7 +168,7 @@ public class myfunctions {
             Exceptioner.TxtException(e, MainJalonGreenCda.TYPES.size(), ""); // limite de la liste
             rwkTypes();
         }
-        return new Object[]{type, code, price};
+        return new TypeSelection(type, code, price);
     }
 
     public static String rwkReference(String reference, int reduct) {
@@ -260,12 +262,17 @@ public class myfunctions {
         String name = ""; String typeName = ""; String date_manufacturing = ""; String[] choix; double price = 0.0; String add_item = "";
         if ("MEDICAL_OFFICE".equals(sector)){
 
+            TypeSelection selection = rwkTypes();
+            String type = selection.type_txt;
+            String code = selection.type_code; // à garder en cas ou
+            price = selection.type_price;
+            
             //fonctionnel
             // myfunctions.Types premierService = MainJalonGreenCda.TYPES.get(0);
             // rwkTxtStringV2(""+premierService.type_txt, false, false);
 
             for (int i = 0; i < MainJalonGreenCda.TYPES.size(); i++) {
-                myfunctions.Types service = MainJalonGreenCda.TYPES.get(i);
+                myfunctions.TypeSelection  service = MainJalonGreenCda.TYPES.get(i);
                 rwkTxtStringV2("Service " + (i+1) + ": " +service.type_txt+" | Code : "+service.type_code+" | Prix : "+ service.type_price, false, false);
             }
 
@@ -275,15 +282,16 @@ public class myfunctions {
             String lastname = (String) userData[1];
             int years = (int) userData[2];
 
-            typeName = addProductType(types);
+            //typeName = addProductType(types);
 
-            String test_date = rwkDateTime("Quelle date voulez vous prendre pour un RDV ? ", "1", "", "HH:mm", "dd/MM/yyyy", true);
-            String test_time = rwkDateTime("A quelle heure souhaitiez vous ? ", "2", "", "HH:mm", "dd/MM/yyyy", true);
-            
-            String reference_date = rwkDateTime(test_date, "4", "", "", "yyyyMMdd", false);
-            String reference_time = rwkDateTime(test_time, "5", "", "HHmm", "", false);
+            String set_date = rwkDateTime("Quelle date voulez vous prendre pour un RDV ? ", "1", "", "HH:mm", "dd/MM/yyyy", true);
+            String set_time = rwkDateTime("A quelle heure souhaitiez vous ? ", "2", "", "HH:mm", "dd/MM/yyyy", true);
+            // appels pour convertir en références 
+            String ref_d = rwkDateTime(set_date, "4", "", "", "yyyyMMdd", false);
+            String ref_t = rwkDateTime(set_time, "5", "", "HHmm", "", false);
+            String ref_fn = rwkReference(firstname, 1); String reference_ln = rwkReference(lastname, 1);
 
-            add_item = reference_date+reference_time+" | Prénom : "+firstname+" | Nom : "+lastname+" | Age : "+years+" | Type : "+typeName;
+            add_item = ref_fn+reference_ln+ref_d+ref_t+" | Prénom : "+firstname+" | Nom : "+lastname+" | Age : "+years+" | Type : "+type+" | RDV le : "+set_date+" à "+set_time;
         }
 
         if ("DEALERSHIP".equals(sector)){
