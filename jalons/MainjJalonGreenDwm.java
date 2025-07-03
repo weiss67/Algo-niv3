@@ -4,7 +4,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import methods.myfunctions;
 
-public class jalon_vert_dwm {
+public class MainjJalonGreenDwm {
     public static void main(String[] args) {
 
     String sector = "DEALERSHIP";
@@ -21,9 +21,14 @@ public class jalon_vert_dwm {
         {"PORSCHE",         "Macan", "911 Carrera"},
         {"LAMBORGHINI",     "Aventador", "Huracan"}
     };
+
+    String[] details_txt = {
+        "Bienvenue dans l'inventaire de votre concession : \nVoulez-vous ? (A) Ajouter une voiture | (B) Supprimer une voiture | (Y) Rechercher une voiture | (W) Afficher la liste de voitures | (X) Quitter", 
+        "", 
+    };
     
     int index = 0;
     ArrayList<String> inventory = new ArrayList<>();
-    inventory = myfunctions.rwkSwitchCase(inventory, index, types, sector, duration, unit, onsale, reduce, vehicles_autos);
+    inventory = myfunctions.rwkSwitchCase(inventory, index, types, sector, duration, unit, onsale, reduce, vehicles_autos, details_txt);
     }
 }

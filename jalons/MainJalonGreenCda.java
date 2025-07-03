@@ -27,21 +27,28 @@ public class MainJalonGreenCda {
     int reduce = 60; //% en prise de charge par défaut
 
     String[] types = {}; // à nettoyer car plus besoin mais MAJ à faire dans les autres mains
-
+    
+    // %s : String | %d : entier | %f : float/double
+    // %.2f : nombre avec 2 décimales | %n : saut de ligne
     String[] txt = {
         "Exemple", 
         "textuel", 
     };
 
     String[][] vehicles_autos = {
-        {"VOLKSWAGEN",      "Golf", "Tiguan", "Polo"},
-        {"AUDI",            "A3", "Q5", "A4"},
-        {"PORSCHE",         "Macan", "911 Carrera"},
-        {"LAMBORGHINI",     "Aventador", "Huracan"}
+        //{"VOLKSWAGEN",      "Golf", "Tiguan", "Polo"},
+        //{"AUDI",            "A3", "Q5", "A4"},
+        //{"PORSCHE",         "Macan", "911 Carrera"},
+        //{"LAMBORGHINI",     "Aventador", "Huracan"}
     };
-    
+
+    String[] details_txt = {
+        "Bienvenue dans listing de rendez-vous : \nVoulez-vous ? (A) Ajouter un RDV | (B) Supprimer un RDV | (Y) Rechercher un RDV | (W) Afficher la liste des RDV | (X) Quitter", 
+        "", 
+    };
+
     int index = 0;
     ArrayList<String> inventory = new ArrayList<>();
-    inventory = myfunctions.rwkSwitchCase(inventory, index, types, sector, duration, unit, onsale, reduce, vehicles_autos);
+    inventory = myfunctions.rwkSwitchCase(inventory, index, types, sector, duration, unit, onsale, reduce, vehicles_autos, details_txt);
     }
 }

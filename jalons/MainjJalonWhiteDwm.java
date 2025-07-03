@@ -4,7 +4,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import methods.myfunctions;
 
-public class jalon_blanc_dwm {
+public class MainjJalonWhiteDwm {
     public static void main(String[] args) {
 
     String sector = "ALIMENTARY";
@@ -14,9 +14,14 @@ public class jalon_blanc_dwm {
     int reduce = 20; //% en reduction
 
     String[] types = {"Viande", "Légume", "Féculant", "Fruit", "Laitage", "Poisson", "Dessert", "Pâtisserie", "Boulangerie"};    
-    //myfunctions.rwkLoopArrays(types);
+
+    String[] details_txt = {
+        "Bienvenue dans l'inventaire de votre concession : \nVoulez-vous ? (A) Ajouter une voiture | (B) Supprimer une voiture | (Y) Rechercher une voiture | (W) Afficher la liste de voitures | (X) Quitter", 
+        "", 
+    };
+
     int index = 0;
     ArrayList<String> inventory = new ArrayList<>();
-    inventory = myfunctions.rwkSwitchCase(inventory, index, types, sector, duration, unit, onsale, reduce, null);
+    inventory = myfunctions.rwkSwitchCase(inventory, index, types, sector, duration, unit, onsale, reduce, null, details_txt);
     }
 }

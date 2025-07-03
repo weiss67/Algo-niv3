@@ -1,18 +1,59 @@
-package methods;
+package jalon;
 
-import jalons.MainJalonGreenCda;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit; //import d'un outil pour comparer entre dates
-import java.util.ArrayList;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList; //import d'un outil pour comparer entre dates
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 //import static methods.MainJalonGreenCda.TYPES;
 
 public class myfunctions {
+
+    public static void TxtException(Exception e, int total, String txt){
+        String errorType = e.getClass().getSimpleName(); // Récupère le nom simple de l'exception
+        String errorMessage = e.getMessage(); // Récupère le message d'erreur
+        String err = "Erreur : ";
+        String messageErr= "";
+ 
+        switch (errorType) {
+            case "InputMismatchException":
+                messageErr = err+"Entrée invalide | Format attendu (nombre)";
+                break;
+            case "ArrayIndexOutOfBoundsException":
+
+   
+            if(total > 0) {
+                messageErr = err+"Index hors limites | Veuillez choisir un nombre entre 1 et "+total;
+            } else {
+                messageErr = err+"Liste vide | Veuillez ajouter des éléments à la liste avant de choisir un index.";
+            }
+
+            
+            break;
+            case "IndexOutOfBoundsException":
+                messageErr = err+"Index hors limites";
+                break;
+            case "NullPointerException":
+                messageErr = err+"Objet non initialisé (Null)";
+                break;
+            case "NumberFormatException":
+                messageErr = err+"Conversion numérique impossible";
+                break;
+            case "DateTimeParseException":
+                messageErr = err+"Date invalide | Format attendu ("+txt+")";
+                break;
+            default:
+                messageErr = err+"inconnue : " + errorMessage;
+                break;
+        }
+
+        System.out.println(messageErr);
+    }
 
     // function qui permet de lister dans configuration
     public static class TypeSelection  {
@@ -133,18 +174,21 @@ public class myfunctions {
         // Par exemple, vous pouvez créer une nouvelle entrée dans la liste avec le type du produit
         String typeName = "";
         try {
-        //rwkTxtString("Type de produit :", false, false);
+        //Déroule la liste de couleur
         rwkTxtString(adpt_txt[0], false, false);
         for (int i = 0; i < type.length; i++) {
             System.out.println("(" + (i + 1) + "). " + type[i]);
         }
-        //int typeChoice = rwkTxtInt("Veuillez choisir votre type de produit :");
+        //Demande à l'utilisateur quelle option choisir
         int typeChoice = rwkTxtInt(adpt_txt[1]);
+
             typeName = type[typeChoice - 1];
-                    //rwkTxtString("Type de produit choisi : " + typeName, false, false);
-                    rwkTxtString(adpt_txt[2]+ typeName, false, false);
+            Double price = rwkCountColor(0, typeName);
+
+                    //Notifie quelle couleur et son prix après avoir selectionné
+                    //rwkTxtString(String.format(adpt_txt[2], typeName, price), false, false);
         } catch (Exception e) {
-            Exceptioner.TxtException(e,type.length, "");
+            TxtException(e,type.length, "");
             addProductType(type, adpt_txt);
         }
         return typeName;
@@ -152,30 +196,23 @@ public class myfunctions {
 
     // nouvelle fonction qui permet de lister et selectionner puis 
     // retourner plusieurs valeurs en differents type de variable
-    public static TypeSelection rwkTypes(String[] rwktypestxt) {
-        TypeSelection selected = null;
-        //String type = ""; String code = ""; double price = 0;
-            // myfunctions.Types premierService = MainJalonGreenCda.TYPES.get(0);
-            // rwkTxtStringV2(""+premierService.type_txt, false, false);
+    public static TypeSelection rwkTypes(String[] rwktypestxt, List<TypeSelection> TYPES) {
+        //appel à faire comme ceci : rwkTypes(rwktypestxt, MainJalonGreenCda.TYPES);
+        TypeSelection selected = null; // null par défaut pour éviter pour bug
         try {
-            for (int i = 0; i < MainJalonGreenCda.TYPES.size(); i++) {
-                TypeSelection  service = MainJalonGreenCda.TYPES.get(i);
+            for (int i = 0; i < TYPES.size(); i++) {
+                TypeSelection  service = TYPES.get(i);
                 rwkTxtStringV2(String.format(rwktypestxt[0],(i+1), service.type_txt, service.type_code, service.type_price), false, false);
             }
             
             int choice = rwkTxtInt(rwktypestxt[1]);
-            selected = MainJalonGreenCda.TYPES.get(choice - 1);
-            // type = selected.type_txt;
-            // code = selected.type_code;
-            // price = selected.type_price;
-            //rwkTxtString(String.format(rwktypestxt[2], type, code, price), false, false);
+            selected = TYPES.get(choice - 1);
             rwkTxtString(String.format(rwktypestxt[2], selected.type_txt, selected.type_code, selected.type_price), false, false);
 
         } catch (Exception e) {
-            Exceptioner.TxtException(e, MainJalonGreenCda.TYPES.size(), ""); // limite de la liste
-            rwkTypes(rwktypestxt);
+            TxtException(e, TYPES.size(), ""); // limite de la liste
+            rwkTypes(rwktypestxt, TYPES);
         }
-        //return new TypeSelection(type, code, price);
         return selected;
     }
 
@@ -185,7 +222,7 @@ public class myfunctions {
                 return reference;}// si déjà en 2 caractères, retourn directement sans modif
             return reference.toUpperCase().substring(0, reduct);
         } catch (Exception e) {
-            Exceptioner.TxtException(e, 0, "");
+            TxtException(e, 0, "");
             rwkReference(reference, reduct);
         }
         return reference;
@@ -220,7 +257,7 @@ public class myfunctions {
             case "Huracan": return count+260000;
 
             default: rwkTxtString("Error rwkCountVehicles()", false, true); 
-            return rwkCountColor(count, vehicle); //relancement de sécurité
+            return rwkCountVehicles(count, vehicle); //relancement de sécurité
         }
     }
 
@@ -259,7 +296,7 @@ public class myfunctions {
         return result;
 
         } catch (Exception e) {
-            Exceptioner.TxtException(e, type.length, "");
+            TxtException(e, type.length, "");
             addProductTypeTest(type);
         }
         return result;
@@ -276,7 +313,8 @@ public class myfunctions {
             /*03*/   "Type de produit choisi : %s | Code : %s | Prix : %.2f", 
             };
 
-            TypeSelection selection = rwkTypes(rwktypestxt);
+            // MainJalonGreenCda.TYPES
+            TypeSelection selection = rwkTypes(rwktypestxt, null);
             String type = selection.type_txt;
             String code = selection.type_code; // à garder en cas ou
             price = selection.type_price;
@@ -333,11 +371,18 @@ public class myfunctions {
             String[] adpt_txt = {
             /*01*/   "Liste des couleurs :", 
             /*02*/   "Quel est sa couleur : ", 
-            /*03*/   "Vous avez choisi le couleur ", 
+            /*03*/   "Vous avez choisi le couleur %s, +%.2f euros", 
             };
 
-            // Choix de couleur
-            typeName = addProductType(types, adpt_txt); price += rwkCountColor(0, typeName);
+            //typeName = addProductType(types, adpt_txt); price += rwkCountColor(0, typeName);
+
+    /* */   // Choix de couleur
+    /* */   typeName = addProductType(types, adpt_txt); 
+    /* */   Double price_color = rwkCountColor(0, typeName);
+    /* */   //Notifie quelle couleur et son prix après avoir selectionné
+    /* */   rwkTxtString(String.format("Vous avez choisi le couleur %s, +%.2f euros", typeName, price_color), false, false);
+    /* */   //
+    /* */   price += price_color;
 
             add_item = "[code : "+reference_marque+reference_model+"-"+reference_date+"] | ID("+index+")| Marque : "+marque+" | Modele : "+modele+" | Neuf : "+condition+" | Kilométrage : "+kilometrage+" | Couleur : "+typeName+" | Prix total : "+String.format("%.2f", price);
         }
@@ -522,7 +567,7 @@ public class myfunctions {
             }
             return result;
         }catch (Exception e){// revoir le textuel
-            Exceptioner.TxtException(e, 0, (date_txt+time_txt));
+            TxtException(e, 0, (date_txt+time_txt));
             return rwkDateTime(prompt, operator, result, time_txt, date_txt, keyboard);
         }
     }
@@ -627,7 +672,7 @@ public class myfunctions {
                 return rwkTxtBoolean(prompt, convert);
             }
         }catch (Exception e){
-            Exceptioner.TxtException(e, 0, "");
+            TxtException(e, 0, "");
             return rwkTxtBoolean(prompt, convert);
         }
     }
@@ -638,7 +683,7 @@ public class myfunctions {
             rwkTxtString(prompt, false, false);
             return sc.nextInt();
         }catch (Exception e){
-            Exceptioner.TxtException(e, 0, "");
+            TxtException(e, 0, "");
             return rwkTxtInt(prompt);
         }
     }
@@ -655,7 +700,7 @@ public class myfunctions {
             }
             return result;
         }catch (Exception e){
-            Exceptioner.TxtException(e, 0, "");
+            TxtException(e, 0, "");
             return rwkCalculator(prompt, result, add, pct);
         }
     }
@@ -726,7 +771,7 @@ public class myfunctions {
             }
         return result;
         }catch (Exception e){
-            Exceptioner.TxtException(e, 0, "");
+            TxtException(e, 0, "");
             return rwkQuizer(query, bool, correct, incorrect);
         }
     }

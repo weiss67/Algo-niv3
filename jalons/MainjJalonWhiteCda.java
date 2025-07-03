@@ -4,7 +4,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import methods.myfunctions;
 
-public class jalon_blanc_cda {
+public class MainjJalonWhiteCda {
     public static void main(String[] args) {
 
     String sector = "ECOMMERCE";
@@ -16,10 +16,15 @@ public class jalon_blanc_cda {
     int reduce = 10; //% en reduction
 
     String[] types = {"TV", "Electro-ménager", "Micro-Informatique", "Audio"};    
-    //myfunctions.rwkLoopArrays(types);
+
+    String[] details_txt = {
+        "Bienvenue dans l'inventaire du site ecommerce ElectroDepot : \nVoulez-vous ? (A) Ajouter un article | (B) Supprimer un article | (Y) Rechercher un article | (W) Afficher la liste d'articles | (X) Quitter", 
+        "", 
+    };
+
     int index = 0;
     ArrayList<String> inventory = new ArrayList<>();
-    inventory = myfunctions.rwkSwitchCase(inventory, index, types, sector, duration, unit, onsale, reduce, null);
+    inventory = myfunctions.rwkSwitchCase(inventory, index, types, sector, duration, unit, onsale, reduce, null, details_txt);
     }
 }
 
