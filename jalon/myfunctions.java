@@ -337,7 +337,7 @@ public class myfunctions {
         return result;
     }
 
-    public static ArrayList<String> rwkAddItem(ArrayList<String> tableau, int index, String[] types, String sector, int duration, ChronoUnit unit, int onsale, int reduce, String[][] all_categorys){
+    public static ArrayList<String> rwkAddItem(ArrayList<String> tableau, int index, String[] types, String sector, int duration, ChronoUnit unit, int onsale, int reduce, String[][][] all_categorys){
         
         String name = ""; String typeName = ""; String date_manufacturing = ""; String[] choix; double price = 0.0; String add_item = "";
         if ("MEDICAL_OFFICE".equals(sector)){
@@ -373,7 +373,7 @@ public class myfunctions {
         if ("DEALERSHIP".equals(sector)){
 
             rwkTxtString("Vous voulez ajouter une voiture, très bien.", false, false);
-            String[] selectionned = rwkChoiceModel(all_categorys, rwkChoiceMark(all_categorys));
+            String[] selectionned = rwkChoiceModel(all_categorys[0], rwkChoiceMark(all_categorys[0]));
 
             String marque = selectionned[0];// récupère la marque
             String modele = selectionned[1];// récupère le modèle
@@ -382,13 +382,8 @@ public class myfunctions {
             // coupure temporaire mettre 1 pour passer
             //rwkTxtString("En attende de suite", true, false);
 
-            // le reste peut être laissé pour le moment
-            String reference_marque = rwkReference(marque, 2);
-            String reference_model = rwkReference(modele, 2);
+            String reference_marque = rwkReference(marque, 2); String reference_model = rwkReference(modele, 2);
             String reference_date = rwkDateTime("", "3", "", "HH:mm", "dd-MM-yyyy", false);
-
-            //Mets le prix du model dans le catalogue
-            //price += rwkCountVehicles(price, modele);
 
             boolean condition = rwkTxtBoolean("Est-il neuf ?", true);
             int kilometrage = rwkTxtInt("Quel est son kilométrage (en km) ?");
@@ -410,18 +405,18 @@ public class myfunctions {
             /*03*/   "Vous avez choisi le couleur %s, +%.2f euros", 
             };
 
-            //typeName = addProductType(types, adpt_txt); price += rwkCountColor(0, typeName);
+            String[] colorChoiced = rwkChoiceModel(all_categorys[1], "Metal");
+            String type_paint = selectionned[0];// récupère la marque
+            String color_choiced = selectionned[1];// récupère le modèle
+            price += Double.parseDouble(selectionned[2]); // converti en double car string de base
 
-            
-
-
-    /* */   // Choix de couleur
-    /* */   typeName = addProductType(types, adpt_txt); 
-    /* */   Double price_color = rwkCountColor(0, typeName);
-    /* */   //Notifie quelle couleur et son prix après avoir selectionné
-    /* */   rwkTxtString(String.format("Vous avez choisi le couleur %s, +%.2f euros", typeName, price_color), false, false);
-    /* */   //
-    /* */   price += price_color;
+    // /* */   // Choix de couleur
+    // /* */   typeName = addProductType(types, adpt_txt); 
+    // /* */   Double price_color = rwkCountColor(0, typeName);
+    // /* */   //Notifie quelle couleur et son prix après avoir selectionné
+    // /* */   rwkTxtString(String.format("Vous avez choisi le couleur %s, +%.2f euros", typeName, price_color), false, false);
+    // /* */   //
+    // /* */   price += price_color;
 
             add_item = "[code : "+reference_marque+reference_model+"-"+reference_date+"] | ID("+index+")| Marque : "+marque+" | Modele : "+modele+" | Neuf : "+condition+" | Kilométrage : "+kilometrage+" | Couleur : "+typeName+" | Prix total : "+String.format("%.2f", price);
         }
@@ -507,29 +502,29 @@ public class myfunctions {
         int index,      String[] types, 
         String sector,  int duration, 
         ChronoUnit unit, int onsale, int reduce,
-        String[][] vehicles_autos, String[] details_txt
+        String[][][] all_categorys, String[] details_txt
         ){
         //String option = rwkTxtString("Voulez-vous ? (A) Ajouter un nouvel article | (B) Supprimer un article | (Y) Chercher un article | (W) Afficher la liste d'articles | (X) Quitter", true, true);
         String option = rwkTxtString(details_txt[0], true, true);
         switch(option){// voir pour faire des nouvelles functions assez indépendants pour utiliser en tout
             case "A": 
             if("ALIMENTARY".equals(sector) || "ECOMMERCE".equals(sector) || "DEALERSHIP".equals(sector)){
-                tableau = rwkAddItem(tableau, index, types, sector, duration, unit, onsale, reduce, vehicles_autos);
+                tableau = rwkAddItem(tableau, index, types, sector, duration, unit, onsale, reduce, all_categorys);
             }else if("MEDICAL_OFFICE".equals(sector)){
-                tableau = rwkAddItem(tableau, index, types, sector, duration, unit, onsale, reduce, vehicles_autos);
+                tableau = rwkAddItem(tableau, index, types, sector, duration, unit, onsale, reduce, all_categorys);
             }
-            return rwkSwitchCase(tableau, index + 1, types, sector, duration, unit, onsale, reduce, vehicles_autos, details_txt); //relance le tableau de proposition avec index ajouté
+            return rwkSwitchCase(tableau, index + 1, types, sector, duration, unit, onsale, reduce, all_categorys, details_txt); //relance le tableau de proposition avec index ajouté
             case "B": tableau = rwkRmvItemViaIndex(tableau, index);
-            return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, vehicles_autos, details_txt);
+            return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, all_categorys, details_txt);
             case "Q": rwkSrhItem(tableau, index);
-            return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, vehicles_autos, details_txt);
+            return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, all_categorys, details_txt);
             case "Y": rwkSrhItem(tableau, index);
-            return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, vehicles_autos, details_txt);
+            return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, all_categorys, details_txt);
             case "W": rwkLoopArraysList(tableau);
-            return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, vehicles_autos, details_txt);
+            return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, all_categorys, details_txt);
             case "X": rwkTxtString("Merci au revoir ! ", false, false); break;
             default: rwkTxtString("Veuillez répondre que par (A), (B), (Y) ou (X)", false, true); 
-            return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, vehicles_autos, details_txt); //relancement de sécurité
+            return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, all_categorys, details_txt); //relancement de sécurité
         }
         return tableau;
     }
