@@ -23,7 +23,7 @@ public class MainjJalonGreenDwm {
     };
 
     String[] details_txt = {
-        "Bienvenue dans l'inventaire de votre concession : \nVoulez-vous ? (A) Ajouter une voiture | (B) Supprimer une voiture | (Y) Rechercher une voiture | (W) Afficher la liste de voitures | (X) Quitter", 
+        "Bienvenue dans l'inventaire de votre concession :\n(A) Ajouter une voiture\n(B) Supprimer une voiture\n(Y) Rechercher une voiture\n(W) Afficher la liste de voitures\n(X) Quitter", 
         "", 
     };
     

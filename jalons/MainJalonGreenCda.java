@@ -10,12 +10,12 @@ public class MainJalonGreenCda {
 
     // configuration des services, codes et prix (à voir aussi dans dealership)
     public static final List<myfunctions.TypeSelection > TYPES = Arrays.asList(
-        new myfunctions.TypeSelection("Bilan de santé",        "BS", 120),
-        new myfunctions.TypeSelection("Cardiologie",           "CD", 200),
-        new myfunctions.TypeSelection("Vaccination",           "VC", 0),
-        new myfunctions.TypeSelection("Certification médical", "CM", 120),
-        new myfunctions.TypeSelection("Général",               "GN", 70),
-        new myfunctions.TypeSelection("Suivi médical",         "SM", 60)
+        new myfunctions.TypeSelection("","Bilan de santé",        "BS", 120),
+        new myfunctions.TypeSelection("","Cardiologie",           "CD", 200),
+        new myfunctions.TypeSelection("","Vaccination",           "VC", 0),
+        new myfunctions.TypeSelection("","Certification médical", "CM", 120),
+        new myfunctions.TypeSelection("","Général",               "GN", 70),
+        new myfunctions.TypeSelection("","Suivi médical",         "SM", 60)
     );
 
     public static void main(String[] args) {

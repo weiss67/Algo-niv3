@@ -16,12 +16,14 @@ public class myfunctions {
 
     // function qui permet de lister dans configuration
     public static class TypeSelection  {
-        public final String type_txt;
+        public final String type_mark;
+        public final String type_model;
         public final String type_code;
         public final double type_price;
 
-        public TypeSelection (String txt, String code, double price) {
-            this.type_txt = txt;
+        public TypeSelection (String mark, String model, String code, double price) {
+            this.type_mark = mark;
+            this.type_model = model;
             this.type_code = code;
             this.type_price = price;
         }
@@ -159,17 +161,13 @@ public class myfunctions {
             // rwkTxtStringV2(""+premierService.type_txt, false, false);
         try {
             for (int i = 0; i < MainJalonGreenCda.TYPES.size(); i++) {
-                TypeSelection  service = MainJalonGreenCda.TYPES.get(i);
-                rwkTxtStringV2(String.format(rwktypestxt[0],(i+1), service.type_txt, service.type_code, service.type_price), false, false);
+                TypeSelection  type = MainJalonGreenCda.TYPES.get(i);
+                rwkTxtStringV2(String.format(rwktypestxt[0],(i+1), type.type_mark, type.type_model, type.type_code, type.type_price), false, false);
             }
             
             int choice = rwkTxtInt(rwktypestxt[1]);
             selected = MainJalonGreenCda.TYPES.get(choice - 1);
-            // type = selected.type_txt;
-            // code = selected.type_code;
-            // price = selected.type_price;
-            //rwkTxtString(String.format(rwktypestxt[2], type, code, price), false, false);
-            rwkTxtString(String.format(rwktypestxt[2], selected.type_txt, selected.type_code, selected.type_price), false, false);
+            rwkTxtString(String.format(rwktypestxt[2], selected.type_mark, selected.type_model, selected.type_code, selected.type_price), false, false);
 
         } catch (Exception e) {
             Exceptioner.TxtException(e, MainJalonGreenCda.TYPES.size(), ""); // limite de la liste
@@ -277,7 +275,8 @@ public class myfunctions {
             };
 
             TypeSelection selection = rwkTypes(rwktypestxt);
-            String type = selection.type_txt;
+            String mark = selection.type_mark;
+            String model = selection.type_model;
             String code = selection.type_code; // à garder en cas ou
             price = selection.type_price;
 
@@ -300,7 +299,7 @@ public class myfunctions {
             String ref_t = rwkDateTime(set_time, "5", "", "HHmm", "", false);
             String ref_fn = rwkReference(firstname, 1); String reference_ln = rwkReference(lastname, 1);
 
-            add_item = ref_fn+reference_ln+ref_d+ref_t+" | Prénom : "+firstname+" | Nom : "+lastname+" | Age : "+years+" | Type : "+type+" | RDV le : "+set_date+" à "+set_time;
+            add_item = ref_fn+reference_ln+ref_d+ref_t+" | Prénom : "+firstname+" | Nom : "+lastname+" | Age : "+years+" | Type : "+model+" | RDV le : "+set_date+" à "+set_time;
         }
 
         if ("DEALERSHIP".equals(sector)){

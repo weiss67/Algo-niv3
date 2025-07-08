@@ -4,6 +4,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 public class MainjJalonGreenDwm {
+
     public static void main(String[] args) {
 
     String sector = "DEALERSHIP";
@@ -23,6 +24,30 @@ public class MainjJalonGreenDwm {
         {"LAMBORGHINI",     "Aventador", "Huracan"}
     };
 
+    String[][] categorys_colors ={
+        {"Metal",      "Blanc",      "500"},
+        {"Metal",      "Noir",       "0"},
+        {"Metal",      "Rouge",      "2000"},
+        {"Metal",      "Bleu",       "1000"}
+    };
+
+    String[][] categorys_vehicles = {
+        // mark, model, price
+        {"VOLKSWAGEN",      "Golf",         "29000"},
+        {"VOLKSWAGEN",      "Tiguan",       "36000"},
+        {"VOLKSWAGEN",      "Polo",         "23000"},
+
+        {"AUDI",            "A3",           "34000"},
+        {"AUDI",            "Q5",           "54000"},
+        {"AUDI",            "A4",           "43000"},
+
+        {"PORSCHE",         "Macan",        "70000"},
+        {"PORSCHE",         "911 Carrera",  "120000"},
+
+        {"LAMBORGHINI",     "Aventador",    "520000"},
+        {"LAMBORGHINI",     "Huracan",      "260000"}
+    };
+
     String[] details_txt = {
         "Bienvenue dans l'inventaire de votre concession :\n(A) Ajouter une voiture\n(B) Supprimer une voiture\n(Y) Rechercher une voiture\n(W) Afficher la liste de voitures\n(X) Quitter", 
         "", 
@@ -30,6 +55,7 @@ public class MainjJalonGreenDwm {
     
     int index = 0;
     ArrayList<String> inventory = new ArrayList<>();
-    inventory = myfunctions.rwkSwitchCase(inventory, index, types, sector, duration, unit, onsale, reduce, vehicles_autos, details_txt);
+    //inventory = myfunctions.rwkSwitchCase(inventory, index, types, sector, duration, unit, onsale, reduce, vehicles_autos, details_txt);
+    inventory = myfunctions.rwkSwitchCase(inventory, index, types, sector, duration, unit, onsale, reduce, categorys_vehicles, details_txt);
     }
 }
