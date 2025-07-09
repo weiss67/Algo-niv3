@@ -17,8 +17,9 @@ public class MainJalonWhiteCda {
 
     String[] types = {"TV", "Electro-ménager", "Micro-Informatique", "Audio"};    
 
+    myfunctions.rwkTxtStringV2("Bienvenue dans l'inventaire du site ecommerce ElectroDepot :\n", false, false);
     String[] details_txt = {
-        "Bienvenue dans l'inventaire du site ecommerce ElectroDepot : \nVoulez-vous ? (A) Ajouter un article | (B) Supprimer un article | (Y) Rechercher un article | (W) Afficher la liste d'articles | (X) Quitter", 
+        "Voulez-vous ? (A) Ajouter un article | (B) Supprimer un article | (Y) Rechercher un article | (W) Afficher la liste d'articles | (X) Quitter", 
         "", 
     };
 

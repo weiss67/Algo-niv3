@@ -17,16 +17,16 @@ public class MainJalonGreenDwm {
 
     String[] types = {""}; // à nettoyer
 
-    String vkw = "VOLKSWAGEN"; String audi = "AUDI"; String prc = "PORSCHE"; String lbg = "LAMBORGHINI";
+    String vkw = "VOLKSWAGEN"; String abt = "AUDI"; String prc = "PORSCHE"; String lbg = "LAMBORGHINI";
     String[][] categorys_vehicles = {
         // mark, model, price, ref
         {vkw,     "Golf",         "29000",    ""},
         {vkw,     "Tiguan",       "36000",    ""},
         {vkw,     "Polo",         "23000",    ""},
 
-        {audi,    "A3",           "34000",    ""},
-        {audi,    "Q5",           "54000",    ""},
-        {audi,    "A4",           "43000",    ""},
+        {abt,    "A3",           "34000",    ""},
+        {abt,    "Q5",           "54000",    ""},
+        {abt,    "A4",           "43000",    ""},
 
         {prc,     "Macan",        "70000",    ""},
         {prc,     "911 Carrera",  "120000",   ""},

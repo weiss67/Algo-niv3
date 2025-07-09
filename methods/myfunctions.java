@@ -1,33 +1,16 @@
 package methods;
-
-import jalons.MainJalonGreenCda;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit; //import d'un outil pour comparer entre dates
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.ArrayList; 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Scanner;
-
-//import static methods.MainJalonGreenCda.TYPES;
+import java.util.Set;
 
 public class myfunctions {
-
-    // function qui permet de lister dans configuration
-    public static class TypeSelection  {
-        public final String type_mark;
-        public final String type_model;
-        public final String type_code;
-        public final double type_price;
-
-        public TypeSelection (String mark, String model, String code, double price) {
-            this.type_mark = mark;
-            this.type_model = model;
-            this.type_code = code;
-            this.type_price = price;
-        }
-    }
 
     public static Object[] rwkSignUp(boolean identity, boolean age, boolean account){
         String firstname = ""; String lastname = ""; int years = 0; String mail = ""; String createmdp = ""; String checkmdp = "";
@@ -100,6 +83,8 @@ public class myfunctions {
         return result;
     }
 
+    // revoir le système et en faire comme les status "perimed", "" ect voir les mots clés
+
     public static double rwkSwitchCasePrice(String option, double price, boolean isOnSale, int onsale, int reduce){
         switch(option){// voir pour faire des nouvelles functions assez indépendants pour utiliser en tout
             //case "Périmée": 
@@ -130,53 +115,6 @@ public class myfunctions {
         return price;
     }
 
-    public static String addProductType(String []type, String[]adpt_txt) {
-        // Implémentez la logique pour ajouter un produit avec son type
-        // Par exemple, vous pouvez créer une nouvelle entrée dans la liste avec le type du produit
-        String typeName = "";
-        try {
-        //rwkTxtString("Type de produit :", false, false);
-        rwkTxtString(adpt_txt[0], false, false);
-        for (int i = 0; i < type.length; i++) {
-            System.out.println("(" + (i + 1) + "). " + type[i]);
-        }
-        //int typeChoice = rwkTxtInt("Veuillez choisir votre type de produit :");
-        int typeChoice = rwkTxtInt(adpt_txt[1]);
-            typeName = type[typeChoice - 1];
-                    //rwkTxtString("Type de produit choisi : " + typeName, false, false);
-                    rwkTxtString(adpt_txt[2]+ typeName, false, false);
-        } catch (Exception e) {
-            Exceptioner.TxtException(e,type.length, "");
-            addProductType(type, adpt_txt);
-        }
-        return typeName;
-    }
-
-    // nouvelle fonction qui permet de lister et selectionner puis 
-    // retourner plusieurs valeurs en differents type de variable
-    public static TypeSelection rwkTypes(String[] rwktypestxt) {
-        TypeSelection selected = null;
-        //String type = ""; String code = ""; double price = 0;
-            // myfunctions.Types premierService = MainJalonGreenCda.TYPES.get(0);
-            // rwkTxtStringV2(""+premierService.type_txt, false, false);
-        try {
-            for (int i = 0; i < MainJalonGreenCda.TYPES.size(); i++) {
-                TypeSelection  type = MainJalonGreenCda.TYPES.get(i);
-                rwkTxtStringV2(String.format(rwktypestxt[0],(i+1), type.type_mark, type.type_model, type.type_code, type.type_price), false, false);
-            }
-            
-            int choice = rwkTxtInt(rwktypestxt[1]);
-            selected = MainJalonGreenCda.TYPES.get(choice - 1);
-            rwkTxtString(String.format(rwktypestxt[2], selected.type_mark, selected.type_model, selected.type_code, selected.type_price), false, false);
-
-        } catch (Exception e) {
-            Exceptioner.TxtException(e, MainJalonGreenCda.TYPES.size(), ""); // limite de la liste
-            rwkTypes(rwktypestxt);
-        }
-        //return new TypeSelection(type, code, price);
-        return selected;
-    }
-
     public static String rwkReference(String reference, int reduct) {
         try {// function qui permet de réduire le mot souhaité au nombre de caractère demandé
             if (reference.length() <= reduct){
@@ -188,82 +126,69 @@ public class myfunctions {
         }
         return reference;
     }
-    
-    public static Double rwkCountColor(double count, String color) {
-        switch(color){
-            case "Blanc": return count+500;
-            case "Noir": return count+0;
-            case "Rouge": return count+2000;
-            case "Bleu": return count+1000;
-            default: rwkTxtString("Error rwkCountColor()", false, true); 
-            return rwkCountColor(count, color); //relancement de sécurité
-        }
-    }
 
-    public static Double rwkCountVehicles(double count, String vehicle) {
-        switch(vehicle){
-            //VOLKSWAGEN
-            case "Golf": return count+29000;
-            case "Tiguan": return count+36000;
-            case "Polo": return count+23000;
-            //AUDI
-            case "A3": return count+34000;
-            case "Q5": return count+54000;
-            case "A4": return count+43000;
-            //PORSCHE
-            case "Macan": return count+70000;
-            case "911 Carrera": return count+120000;
-            //LAMBORGHINI
-            case "Aventador": return count+520000;
-            case "Huracan": return count+260000;
-
-            default: rwkTxtString("Error rwkCountVehicles()", false, true); 
-            return rwkCountColor(count, vehicle); //relancement de sécurité
-        }
-    }
-
-    public static String[] addProductTypeTest(String[][] type) {
+    public static String rwkChoiceCategory(String[][] all_categorys) {
+        String result = ""; 
         
-        String[] autos_volkswagen   = type[0];
-        String[] autos_audi         = type[1]; 
-        String[] autos_porsche      = type[2];
-        String[] autos_lamborghini  = type[3];
-
-        String[] result = new String[2]; // [0] = marque, [1] = modèle
-
-        String typeName = "";
-        try {
-        System.out.println("Quel est sa marque, choissisez son numéro :");
-        for (int i = 0; i < type.length; i++) {
-            System.out.println(""+ (i + 1) +" - "+ type[i][0]);
+        // Étape 1: Récupérer toutes les marques (sans doublons)
+        // Convertir le Set en List pour accéder par index
+        Set<String> marks = new HashSet<>();
+        for (String[] mark : all_categorys) {
+            marks.add(mark[0]); // Index 0 = marque (prends que les marques)
         }
-        int typeChoice = rwkTxtInt("");
-            typeName = type[typeChoice - 1][0];
-            System.out.println("Vous avez choisi la marque : " + typeName);
+        List<String> marksList = new ArrayList<>(marks);
 
-            System.out.println("\nQuel est son modèle, choissisez son numéro :");
-            String[] models = Arrays.copyOfRange(type[typeChoice - 1], 1, type[typeChoice - 1].length);
-        for (int i = 0; i < models.length; i++) {
-            System.out.println("(" + (i + 1) + "). " + models[i]);
-        }
-        
-        int modelChoice = rwkTxtInt("");
-        String selectedModel = models[modelChoice - 1];
-        System.out.println("Vous avez choisi le modèle : " + selectedModel);
-        
-        result[0] = typeName;
-        result[1] = selectedModel;
-
-        return result;
+        try{
+            // déroule une liste de marques
+            System.out.println("Marques disponibles:");
+            int index_marks = 1;
+            for (String mark : marks) {
+                System.out.println(index_marks + ". " + mark);
+                index_marks++;
+            }
+            int choiceMark = rwkTxtInt("Choisissez une marque (numéro): ");
+            String markChoiced = marksList.get(choiceMark - 1);
+            System.out.println("Vous avez choisi : " + markChoiced);
+            result = markChoiced;
 
         } catch (Exception e) {
-            Exceptioner.TxtException(e, type.length, "");
-            addProductTypeTest(type);
-        }
+            Exceptioner.TxtException(e, marksList.size(), "");
+            rwkChoiceCategory(all_categorys);
+        }        
         return result;
     }
 
-    public static ArrayList<String> rwkAddItem(ArrayList<String> tableau, int index, String[] types, String sector, int duration, ChronoUnit unit, int onsale, int reduce, String[][] all_categorys){
+    public static String[] rwkChoiceElement(String[][] all_categorys, String markChoiced) {
+        String[] result = new String[3]; // 3 valeurs attendues voir pour mettre plus si il faut
+
+        System.out.println("\nModèles disponibles pour " + markChoiced + ":");
+        int modelIndex = 1;
+        for (String[] vehicule : all_categorys) {
+            if (vehicule[0].equals(markChoiced)) {
+                System.out.println(modelIndex + ". " + vehicule[1] + " (" + vehicule[2] + " euros)");
+                modelIndex++;
+            }
+        }
+        // créer une liste pour pouvoir indexer tout en prenant que la catégorie selectionnée
+        List<String[]> models = new ArrayList<>();
+        for (String[] model : all_categorys)
+        if (model[0].equals(markChoiced)) models.add(model);
+
+        try{
+            int choiceModel = rwkTxtInt("Choisissez un modèle: ");
+            String[] selection = models.get(choiceModel - 1);
+            System.out.println("Selection: " + selection[1] + " (" + selection[2] + " euros)");
+
+            result[0] = markChoiced; result[1] = selection[1]; result[2] = selection[2];
+
+        } catch (Exception e) {
+            Exceptioner.TxtException(e, models.size(), "");
+            rwkChoiceElement(all_categorys, markChoiced);
+        }        
+        return result;
+    }
+
+    public static ArrayList<String> rwkAddItem(ArrayList<String> tableau, int index, String[] types, String sector, int duration, ChronoUnit unit, int onsale, int reduce, String[][][] all_categorys){
         
         String name = ""; String typeName = ""; String date_manufacturing = ""; String[] choix; double price = 0.0; String add_item = "";
         if ("MEDICAL_OFFICE".equals(sector)){
@@ -273,12 +198,6 @@ public class myfunctions {
             /*02*/   "Veuillez choisir votre type de produit :", 
             /*03*/   "Type de produit choisi : %s | Code : %s | Prix : %.2f", 
             };
-
-            TypeSelection selection = rwkTypes(rwktypestxt);
-            String mark = selection.type_mark;
-            String model = selection.type_model;
-            String code = selection.type_code; // à garder en cas ou
-            price = selection.type_price;
 
             // for (int i = 0; i < MainJalonGreenCda.TYPES.size(); i++) {
             //     myfunctions.TypeSelection  service = MainJalonGreenCda.TYPES.get(i);
@@ -291,7 +210,6 @@ public class myfunctions {
             String lastname = (String) userData[1];
             int years = (int) userData[2];
 
-            //typeName = addProductType(types);
             String set_date = rwkDateTime("Quelle date voulez vous prendre pour un RDV ? ", "1", "", "HH:mm", "dd/MM/yyyy", true);
             String set_time = rwkDateTime("A quelle heure souhaitiez vous ? ", "2", "", "HH:mm", "dd/MM/yyyy", true);
             // appels pour convertir en références 
@@ -299,21 +217,23 @@ public class myfunctions {
             String ref_t = rwkDateTime(set_time, "5", "", "HHmm", "", false);
             String ref_fn = rwkReference(firstname, 1); String reference_ln = rwkReference(lastname, 1);
 
-            add_item = ref_fn+reference_ln+ref_d+ref_t+" | Prénom : "+firstname+" | Nom : "+lastname+" | Age : "+years+" | Type : "+model+" | RDV le : "+set_date+" à "+set_time;
+            add_item = ref_fn+reference_ln+ref_d+ref_t+" | Prénom : "+firstname+" | Nom : "+lastname+" | Age : "+years+" | Type : mark | RDV le : "+set_date+" à "+set_time;
         }
 
         if ("DEALERSHIP".equals(sector)){
+
             rwkTxtString("Vous voulez ajouter une voiture, très bien.", false, false);
-            choix = addProductTypeTest(all_categorys);
+            String[] selectionned = rwkChoiceElement(all_categorys[0], rwkChoiceCategory(all_categorys[0]));
 
-            String marque = choix[0];// récupère la marque en 1er
-            String modele = choix[1];// récupère le modèle en 2ème
-            String reference_marque = rwkReference(marque, 2);
-            String reference_model = rwkReference(modele, 2);
+            String marque = selectionned[0];// récupère la marque
+            String modele = selectionned[1];// récupère le modèle
+            price = Double.parseDouble(selectionned[2]); // converti en double car string de base
+
+            // coupure temporaire mettre 1 pour passer
+            //rwkTxtString("En attende de suite", true, false);
+
+            String reference_marque = rwkReference(marque, 2); String reference_model = rwkReference(modele, 2);
             String reference_date = rwkDateTime("", "3", "", "HH:mm", "dd-MM-yyyy", false);
-
-            //Mets le prix du model dans le catalogue
-            price += rwkCountVehicles(price, modele);
 
             boolean condition = rwkTxtBoolean("Est-il neuf ?", true);
             int kilometrage = rwkTxtInt("Quel est son kilométrage (en km) ?");
@@ -332,13 +252,15 @@ public class myfunctions {
             String[] adpt_txt = {
             /*01*/   "Liste des couleurs :", 
             /*02*/   "Quel est sa couleur : ", 
-            /*03*/   "Vous avez choisi le couleur ", 
+            /*03*/   "Vous avez choisi le couleur %s, +%.2f euros", 
             };
 
-            // Choix de couleur
-            typeName = addProductType(types, adpt_txt); price += rwkCountColor(0, typeName);
+            String[] colorChoiced = rwkChoiceElement(all_categorys[1], "couleur métalisée");
+            String type_paint = selectionned[0];// récupère le type de peinture
+            String color_choiced = selectionned[1];// récupère la couleur de peinture
+            price += Double.parseDouble(selectionned[2]); // converti en double car string de base
 
-            add_item = "[code : "+reference_marque+reference_model+"-"+reference_date+"] | ID("+index+")| Marque : "+marque+" | Modele : "+modele+" | Neuf : "+condition+" | Kilométrage : "+kilometrage+" | Couleur : "+typeName+" | Prix total : "+String.format("%.2f", price);
+            add_item = "[code : "+reference_marque+reference_model+"-"+reference_date+"] | ID("+index+")| Marque : "+marque+" | Modele : "+modele+" | Neuf : "+condition+" | Kilométrage : "+kilometrage+" | Couleur : "+color_choiced+" | Prix total : "+String.format("%.2f", price);
         }
 
         if ("ALIMENTARY".equals(sector) || "ECOMMERCE".equals(sector)){
@@ -349,7 +271,10 @@ public class myfunctions {
             /*02*/   "Veuillez choisir votre type de produit : ", 
             /*03*/   "Type de produit choisi : ", 
             };
-            typeName             = addProductType(types, adpt_txt);
+            String[] selectionned = rwkChoiceElement(all_categorys[0], "type");
+            typeName = selectionned[1];// récupère le modèle
+
+            rwkTxtString("Type ajouté avec succès ! "+typeName, false, false);
 
             //String test_date            = rwkDateTime("Veuillez mettre la date de fabrication ", "1", "");
             //String test_time            = rwkDateTime("Veuillez mettre l'heure et minute de fabrication ", "2", "");
@@ -422,29 +347,29 @@ public class myfunctions {
         int index,      String[] types, 
         String sector,  int duration, 
         ChronoUnit unit, int onsale, int reduce,
-        String[][] vehicles_autos, String[] details_txt
+        String[][][] all_categorys, String[] details_txt
         ){
         //String option = rwkTxtString("Voulez-vous ? (A) Ajouter un nouvel article | (B) Supprimer un article | (Y) Chercher un article | (W) Afficher la liste d'articles | (X) Quitter", true, true);
         String option = rwkTxtString(details_txt[0], true, true);
         switch(option){// voir pour faire des nouvelles functions assez indépendants pour utiliser en tout
             case "A": 
             if("ALIMENTARY".equals(sector) || "ECOMMERCE".equals(sector) || "DEALERSHIP".equals(sector)){
-                tableau = rwkAddItem(tableau, index, types, sector, duration, unit, onsale, reduce, vehicles_autos);
+                tableau = rwkAddItem(tableau, index, types, sector, duration, unit, onsale, reduce, all_categorys);
             }else if("MEDICAL_OFFICE".equals(sector)){
-                tableau = rwkAddItem(tableau, index, types, sector, duration, unit, onsale, reduce, vehicles_autos);
+                tableau = rwkAddItem(tableau, index, types, sector, duration, unit, onsale, reduce, all_categorys);
             }
-            return rwkSwitchCase(tableau, index + 1, types, sector, duration, unit, onsale, reduce, vehicles_autos, details_txt); //relance le tableau de proposition avec index ajouté
+            return rwkSwitchCase(tableau, index + 1, types, sector, duration, unit, onsale, reduce, all_categorys, details_txt); //relance le tableau de proposition avec index ajouté
             case "B": tableau = rwkRmvItemViaIndex(tableau, index);
-            return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, vehicles_autos, details_txt);
+            return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, all_categorys, details_txt);
             case "Q": rwkSrhItem(tableau, index);
-            return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, vehicles_autos, details_txt);
+            return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, all_categorys, details_txt);
             case "Y": rwkSrhItem(tableau, index);
-            return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, vehicles_autos, details_txt);
+            return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, all_categorys, details_txt);
             case "W": rwkLoopArraysList(tableau);
-            return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, vehicles_autos, details_txt);
+            return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, all_categorys, details_txt);
             case "X": rwkTxtString("Merci au revoir ! ", false, false); break;
             default: rwkTxtString("Veuillez répondre que par (A), (B), (Y) ou (X)", false, true); 
-            return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, vehicles_autos, details_txt); //relancement de sécurité
+            return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, all_categorys, details_txt); //relancement de sécurité
         }
         return tableau;
     }
@@ -671,8 +596,8 @@ public class myfunctions {
                 case "-":  result -= dft; break;
                 case "*":  result = dft * result; break;
                 case "/":  result = dft / result; break;
-                case "+%": result = result * (1+dft/100.0);break; // augmentation
-                case "-%": result = result * (1-dft/100.0);break; // réduction
+                case "+%": result = result * (1+dft/100.0); break; // augmentation
+                case "-%": result = result * (1-dft/100.0); break; // réduction
                 case "=":  result = dft; break; //laisse comme tel afin d'éviter de créer une function juste pour cela
                 default: System.out.println("(op_error) revoir l'opérator"); break;
             }
@@ -765,24 +690,4 @@ public class myfunctions {
         }
         return solde;
     }
-
-
-    /*
-    public static class QuizResult {
-        private final String message;
-        private final int score;
-
-        public QuizResult(String message, int score) {
-            this.message = message;
-            this.score = score;
-        }
-    }
-
-    public static QuizResult rwkQuizer(String query, boolean correctAnswer) {
-        boolean userAnswer = rwkTxtBoolean(query + " (true/false)");
-        String message = (userAnswer == correctAnswer) ? "Bonne réponse !" : "Mauvaise réponse !";
-        int score = (userAnswer == correctAnswer) ? 1 : 0;
-        return new QuizResult(message, score);
-    }
-    */
 }
