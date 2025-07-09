@@ -1,19 +1,14 @@
 package jalon;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList; //import d'un outil pour comparer entre dates
-import java.util.Arrays;
+import java.time.temporal.ChronoUnit; //import d'un outil pour comparer entre dates
+import java.util.ArrayList; 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
-
-
-//import static methods.MainJalonGreenCda.TYPES;
 
 public class myfunctions {
 
@@ -173,7 +168,6 @@ public class myfunctions {
         int typeChoice = rwkTxtInt(adpt_txt[1]);
 
             typeName = type[typeChoice - 1];
-            Double price = rwkCountColor(0, typeName);
 
                     //Notifie quelle couleur et son prix après avoir selectionné
                     //rwkTxtString(String.format(adpt_txt[2], typeName, price), false, false);
@@ -195,93 +189,19 @@ public class myfunctions {
         }
         return reference;
     }
-    
-    // à delete ici et dans l'autre
-    public static Double rwkCountColor(double count, String color) {
-        switch(color){
-            case "Blanc": return count+500;
-            case "Noir": return count+0;
-            case "Rouge": return count+2000;
-            case "Bleu": return count+1000;
-            default: rwkTxtString("Error rwkCountColor()", false, true); 
-            return rwkCountColor(count, color); //relancement de sécurité
-        }
-    }
 
-    //à delete ici et dans l'autre
-    public static Double rwkCountVehicles(double count, String vehicle) {
-        switch(vehicle){
-            //VOLKSWAGEN
-            case "Golf": return count+29000;
-            case "Tiguan": return count+36000;
-            case "Polo": return count+23000;
-            //AUDI
-            case "A3": return count+34000;
-            case "Q5": return count+54000;
-            case "A4": return count+43000;
-            //PORSCHE
-            case "Macan": return count+70000;
-            case "911 Carrera": return count+120000;
-            //LAMBORGHINI
-            case "Aventador": return count+520000;
-            case "Huracan": return count+260000;
-
-            default: rwkTxtString("Error rwkCountVehicles()", false, true); 
-            return rwkCountVehicles(count, vehicle); //relancement de sécurité
-        }
-    }
-
-    // à voir pour aussi delete et se servir d'un string pour collecter plusieurs données en return
-    public static String[] addProductTypeTest(String[][] type) {
+    public static String rwkChoiceCategory(String[][] all_categorys) {
+        String result = ""; 
         
-        String[] autos_volkswagen   = type[0];
-        String[] autos_audi         = type[1]; 
-        String[] autos_porsche      = type[2];
-        String[] autos_lamborghini  = type[3];
-
-        String[] result = new String[2]; // [0] = marque, [1] = modèle
-
-        String typeName = "";
-        try {
-        System.out.println("Quel est sa marque, choissisez son numéro :");
-        for (int i = 0; i < type.length; i++) {
-            System.out.println(""+ (i + 1) +" - "+ type[i][0]);
+        // Étape 1: Récupérer toutes les marques (sans doublons)
+        // Convertir le Set en List pour accéder par index
+        Set<String> marks = new HashSet<>();
+        for (String[] mark : all_categorys) {
+            marks.add(mark[0]); // Index 0 = marque (prends que les marques)
         }
-        int typeChoice = rwkTxtInt("");
-            typeName = type[typeChoice - 1][0];
-            System.out.println("Vous avez choisi la marque : " + typeName);
+        List<String> marksList = new ArrayList<>(marks);
 
-            System.out.println("\nQuel est son modèle, choissisez son numéro :");
-            String[] models = Arrays.copyOfRange(type[typeChoice - 1], 1, type[typeChoice - 1].length);
-        for (int i = 0; i < models.length; i++) {
-            System.out.println("(" + (i + 1) + "). " + models[i]);
-        }
-        
-        int modelChoice = rwkTxtInt("");
-        String selectedModel = models[modelChoice - 1];
-        System.out.println("Vous avez choisi le modèle : " + selectedModel);
-        
-        result[0] = typeName;
-        result[1] = selectedModel;
-
-        return result;
-
-        } catch (Exception e) {
-            TxtException(e, type.length, "");
-            addProductTypeTest(type);
-        }
-        return result;
-    }
-
-    public static String rwkChoiceMark(String[][] all_categorys) {
-        String result = ""; int sizeLimited = 0;
         try{
-            // Étape 1: Récupérer toutes les marques (sans doublons)
-            Set<String> marks = new HashSet<>();
-            for (String[] mark : all_categorys) {
-                marks.add(mark[0]); // Index 0 = marque (prends que les marques)
-            }
-
             // déroule une liste de marques
             System.out.println("Marques disponibles:");
             int index_marks = 1;
@@ -289,50 +209,44 @@ public class myfunctions {
                 System.out.println(index_marks + ". " + mark);
                 index_marks++;
             }
-
             int choiceMark = rwkTxtInt("Choisissez une marque (numéro): ");
-            // Convertir le Set en List pour accéder par index
-            List<String> marksList = new ArrayList<>(marks);
-            sizeLimited = marksList.size();
             String markChoiced = marksList.get(choiceMark - 1);
             System.out.println("Vous avez choisi : " + markChoiced);
             result = markChoiced;
 
         } catch (Exception e) {
-            TxtException(e, sizeLimited, "");
-            rwkChoiceMark(all_categorys);
+            TxtException(e, marksList.size(), "");
+            rwkChoiceCategory(all_categorys);
         }        
         return result;
     }
 
-    public static String[] rwkChoiceModel(String[][] all_categorys, String markChoiced) {
+    public static String[] rwkChoiceElement(String[][] all_categorys, String markChoiced) {
         String[] result = new String[3]; // 3 valeurs attendues voir pour mettre plus si il faut
-        int sizeLimited = 0; // capte la hauteur maximum du tableau pour catch
+
+        System.out.println("\nModèles disponibles pour " + markChoiced + ":");
+        int modelIndex = 1;
+        for (String[] vehicule : all_categorys) {
+            if (vehicule[0].equals(markChoiced)) {
+                System.out.println(modelIndex + ". " + vehicule[1] + " (" + vehicule[2] + " euros)");
+                modelIndex++;
+            }
+        }
+        // créer une liste pour pouvoir indexer tout en prenant que la catégorie selectionnée
+        List<String[]> models = new ArrayList<>();
+        for (String[] model : all_categorys)
+        if (model[0].equals(markChoiced)) models.add(model);
 
         try{
-            //function pour model
-            System.out.println("\nModèles disponibles pour " + markChoiced + ":");
-            int modelIndex = 1;
-            for (String[] vehicule : all_categorys) {
-                if (vehicule[0].equals(markChoiced)) {
-                    System.out.println(modelIndex + ". " + vehicule[1] + " (" + vehicule[2] + " euros)");
-                    modelIndex++;
-                }
-            }
-
             int choiceModel = rwkTxtInt("Choisissez un modèle: ");
-            List<String[]> models = new ArrayList<>();
-            sizeLimited = models.size();
-            for (String[] model : all_categorys)
-            if (model[0].equals(markChoiced)) models.add(model);
             String[] selection = models.get(choiceModel - 1);
             System.out.println("Selection: " + selection[1] + " (" + selection[2] + " euros)");
 
             result[0] = markChoiced; result[1] = selection[1]; result[2] = selection[2];
 
         } catch (Exception e) {
-            TxtException(e, sizeLimited, "");
-            rwkChoiceModel(all_categorys, markChoiced);
+            TxtException(e, models.size(), "");
+            rwkChoiceElement(all_categorys, markChoiced);
         }        
         return result;
     }
@@ -373,7 +287,7 @@ public class myfunctions {
         if ("DEALERSHIP".equals(sector)){
 
             rwkTxtString("Vous voulez ajouter une voiture, très bien.", false, false);
-            String[] selectionned = rwkChoiceModel(all_categorys[0], rwkChoiceMark(all_categorys[0]));
+            String[] selectionned = rwkChoiceElement(all_categorys[0], rwkChoiceCategory(all_categorys[0]));
 
             String marque = selectionned[0];// récupère la marque
             String modele = selectionned[1];// récupère le modèle
@@ -405,20 +319,12 @@ public class myfunctions {
             /*03*/   "Vous avez choisi le couleur %s, +%.2f euros", 
             };
 
-            String[] colorChoiced = rwkChoiceModel(all_categorys[1], "Metal");
-            String type_paint = selectionned[0];// récupère la marque
-            String color_choiced = selectionned[1];// récupère le modèle
+            String[] colorChoiced = rwkChoiceElement(all_categorys[1], "couleur métalisée");
+            String type_paint = selectionned[0];// récupère le type de peinture
+            String color_choiced = selectionned[1];// récupère la couleur de peinture
             price += Double.parseDouble(selectionned[2]); // converti en double car string de base
 
-    // /* */   // Choix de couleur
-    // /* */   typeName = addProductType(types, adpt_txt); 
-    // /* */   Double price_color = rwkCountColor(0, typeName);
-    // /* */   //Notifie quelle couleur et son prix après avoir selectionné
-    // /* */   rwkTxtString(String.format("Vous avez choisi le couleur %s, +%.2f euros", typeName, price_color), false, false);
-    // /* */   //
-    // /* */   price += price_color;
-
-            add_item = "[code : "+reference_marque+reference_model+"-"+reference_date+"] | ID("+index+")| Marque : "+marque+" | Modele : "+modele+" | Neuf : "+condition+" | Kilométrage : "+kilometrage+" | Couleur : "+typeName+" | Prix total : "+String.format("%.2f", price);
+            add_item = "[code : "+reference_marque+reference_model+"-"+reference_date+"] | ID("+index+")| Marque : "+marque+" | Modele : "+modele+" | Neuf : "+condition+" | Kilométrage : "+kilometrage+" | Couleur : "+color_choiced+" | Prix total : "+String.format("%.2f", price);
         }
 
         if ("ALIMENTARY".equals(sector) || "ECOMMERCE".equals(sector)){
@@ -751,8 +657,8 @@ public class myfunctions {
                 case "-":  result -= dft; break;
                 case "*":  result = dft * result; break;
                 case "/":  result = dft / result; break;
-                case "+%": result = result * (1+dft/100.0);break; // augmentation
-                case "-%": result = result * (1-dft/100.0);break; // réduction
+                case "+%": result = result * (1+dft/100.0); break; // augmentation
+                case "-%": result = result * (1-dft/100.0); break; // réduction
                 case "=":  result = dft; break; //laisse comme tel afin d'éviter de créer une function juste pour cela
                 default: System.out.println("(op_error) revoir l'opérator"); break;
             }
@@ -845,24 +751,4 @@ public class myfunctions {
         }
         return solde;
     }
-
-
-    /*
-    public static class QuizResult {
-        private final String message;
-        private final int score;
-
-        public QuizResult(String message, int score) {
-            this.message = message;
-            this.score = score;
-        }
-    }
-
-    public static QuizResult rwkQuizer(String query, boolean correctAnswer) {
-        boolean userAnswer = rwkTxtBoolean(query + " (true/false)");
-        String message = (userAnswer == correctAnswer) ? "Bonne réponse !" : "Mauvaise réponse !";
-        int score = (userAnswer == correctAnswer) ? 1 : 0;
-        return new QuizResult(message, score);
-    }
-    */
 }

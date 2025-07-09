@@ -4,7 +4,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import methods.myfunctions;
 
-public class MainjJalonGreenDwm {
+public class MainJalonGreenDwm {
     public static void main(String[] args) {
 
     String sector = "DEALERSHIP";
