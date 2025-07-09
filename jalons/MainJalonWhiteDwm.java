@@ -18,7 +18,7 @@ public class MainJalonWhiteDwm {
 
     String t = "type";
     String[][] categorys_alimentary = {
-        // mark, model, price, ref
+        // mark, model, price, money, ref
         {t,     "Viande",        "",     ""},
         {t,     "Légume",        "",     ""},
         {t,     "Féculant",      "",     ""},

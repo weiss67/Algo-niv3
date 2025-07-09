@@ -19,22 +19,22 @@ public class MainJalonGreenDwm {
 
     String[] types = {""}; // à nettoyer et retirer
 
-    String vkw = "VOLKSWAGEN"; String abt = "AUDI"; String prc = "PORSCHE"; String lbg = "LAMBORGHINI";
+    String vkw = "VOLKSWAGEN"; String abt = "AUDI"; String prc = "PORSCHE"; String lbg = "LAMBORGHINI"; String € = "euros";
     String[][] categorys_vehicles = {
-        // mark, model, price, ref
-        {vkw,     "Golf",         "29000",    ""},
-        {vkw,     "Tiguan",       "36000",    ""},
-        {vkw,     "Polo",         "23000",    ""},
+        // mark, model, price, money, ref
+        {vkw,     "Golf",         "29000",    €},
+        {vkw,     "Tiguan",       "36000",    €},
+        {vkw,     "Polo",         "23000",    €},
 
-        {abt,     "A3",           "34000",    ""},
-        {abt,     "Q5",           "54000",    ""},
-        {abt,     "A4",           "43000",    ""},
+        {abt,     "A3",           "34000",    €},
+        {abt,     "Q5",           "54000",    €},
+        {abt,     "A4",           "43000",    €},
 
-        {prc,     "Macan",        "70000",    ""},
-        {prc,     "911 Carrera",  "120000",   ""},
+        {prc,     "Macan",        "70000",    €},
+        {prc,     "911 Carrera",  "120000",   €},
 
-        {lbg,     "Aventador",    "520000",   ""},
-        {lbg,     "Huracan",      "260000",   ""}
+        {lbg,     "Aventador",    "520000",   €},
+        {lbg,     "Huracan",      "260000",   €}
     };
 
     String cm = "couleur métalisée";

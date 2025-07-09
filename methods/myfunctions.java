@@ -165,7 +165,7 @@ public class myfunctions {
         int modelIndex = 1;
         for (String[] vehicule : all_categorys) {
             if (vehicule[0].equals(markChoiced)) {
-                System.out.println(modelIndex + ". " + vehicule[1] + " (" + vehicule[2] + " euros)");
+                System.out.println(modelIndex + " | "+vehicule[1]+" "+vehicule[2]+" "+vehicule[3]);
                 modelIndex++;
             }
         }
