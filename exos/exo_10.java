@@ -6,7 +6,7 @@ public class exo_10 {
         int result = 0;  // Le score global
         boolean bool;
         String correct = "Bonne réponse !"; String incorrect = "Mauvaise réponse !";
-        myfunctions.rwkTxtString("", false, false);
+        myfunctions.rwkTxtStringV2("", false, false);
 
         bool = myfunctions.rwkQuizerNv2("Est-ce que le soleil se lève à l'est ?", true, correct, incorrect);
         result += myfunctions.rwkScore(bool, 1, 0);
@@ -17,6 +17,6 @@ public class exo_10 {
         bool = myfunctions.rwkQuizerNv2("Est-ce que l’eau bout à 100 degrés ?", true, correct, incorrect);
         result += myfunctions.rwkScore(bool, 1, 0);
 
-        myfunctions.rwkTxtString("Votre score est de "+ result, false, false);
+        myfunctions.rwkTxtStringV2("Votre score est de "+ result, false, false);
     }
 }

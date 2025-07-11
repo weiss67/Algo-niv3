@@ -1,4 +1,5 @@
 package jalon;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -82,7 +83,7 @@ public class myfunctions {
     public static String rwkLoopArrays(String[] arrays){
         String result = "";
         for (int i = 0; i < arrays.length; i++){
-            result += rwkTxtString("N°"+i+" | "+arrays[i]+"", false, false);
+            result += rwkTxtStringV2("N°"+i+" | "+arrays[i]+"", false, false);
         }
         return result;
     }
@@ -103,20 +104,20 @@ public class myfunctions {
         }
 
         String result = "";
-        //rwkTxtString("Il y a "+difference+" "+unit+" de différence entre aujourd'hui et péremption (Période de 20 % si proche des "+duration+" jours restants)", false, false);
+        //rwkTxtStringV2("Il y a "+difference+" "+unit+" de différence entre aujourd'hui et péremption (Période de 20 % si proche des "+duration+" jours restants)", false, false);
         
-        //rwkTxtString(difference+" >= "+duration, false, false);
+        //rwkTxtStringV2(difference+" >= "+duration, false, false);
 
         if(sector == "ALIMENTARY" && (difference < 0)){ // si au dessous du 0, évite des -1 ou moins
-            //rwkTxtString("TEST 1 | Différence de "+ difference, false, false);
+            //rwkTxtStringV2("TEST 1 | Différence de "+ difference, false, false);
             //result = "Périmée"; //fonctionnel
             result = "EXPIRED";
         }else if( (sector == "ALIMENTARY" && (difference <= duration)) || (sector == "ECOMMERCE" && (difference >= duration))){
-            //rwkTxtString("TEST 2 LIMITED", false, false);
+            //rwkTxtStringV2("TEST 2 LIMITED", false, false);
             //result = "Consommable (Périme bientôt !!!)";
             result = "LIMITED";
         }else{
-            //rwkTxtString("TEST 3 Différence de "+ difference, false, false);
+            //rwkTxtStringV2("TEST 3 Différence de "+ difference, false, false);
             //result = "Consommable";
             result = "VALIDATED";
         }
@@ -132,23 +133,23 @@ public class myfunctions {
             break;
             //case "Consommable (Périme bientôt !!!)": 
             case "LIMITED":
-            //rwkTxtString("CHECK rwkSwitchCasePrice 1 "+price, false, false);
+            //rwkTxtStringV2("CHECK rwkSwitchCasePrice 1 "+price, false, false);
             double discount;
             if (isOnSale) {
                 //discount = 40;
                 discount = onsale;
-                rwkTxtString("(Solde de "+onsale+"% appliquée)", false, false); 
+                rwkTxtStringV2("(Solde de "+onsale+"% appliquée)", false, false); 
             } else {
                 //discount = 10;
                 discount = reduce;
-                rwkTxtString("(Réduction de "+reduce+"% appliquée)", false, false);
+                rwkTxtStringV2("(Réduction de "+reduce+"% appliquée)", false, false);
             }
             price = myfunctions.rwkOperatorV2("", false, discount, "-%", "", price); 
             break;
             //case "Consommable":
             case "VALIDATED":
             break;
-            default: rwkTxtString("default rwkSwitchCasePrice", false, true); 
+            default: rwkTxtStringV2("default rwkSwitchCasePrice", false, true); 
             return rwkSwitchCasePrice(option, price, isOnSale, onsale, reduce); //relancement de sécurité
         }
         return price;
@@ -160,7 +161,7 @@ public class myfunctions {
         String typeName = "";
         try {
         //Déroule la liste de couleur
-        rwkTxtString(adpt_txt[0], false, false);
+        rwkTxtStringV2(adpt_txt[0], false, false);
         for (int i = 0; i < type.length; i++) {
             System.out.println("(" + (i + 1) + "). " + type[i]);
         }
@@ -170,7 +171,7 @@ public class myfunctions {
             typeName = type[typeChoice - 1];
 
                     //Notifie quelle couleur et son prix après avoir selectionné
-                    //rwkTxtString(String.format(adpt_txt[2], typeName, price), false, false);
+                    //rwkTxtStringV2(String.format(adpt_txt[2], typeName, price), false, false);
         } catch (Exception e) {
             TxtException(e,type.length, "");
             addProductType(type, adpt_txt);
@@ -286,7 +287,7 @@ public class myfunctions {
 
         if ("DEALERSHIP".equals(sector)){
 
-            rwkTxtString("Vous voulez ajouter une voiture, très bien.", false, false);
+            rwkTxtStringV2("Vous voulez ajouter une voiture, très bien.", false, false);
             String[] selectionned = rwkChoiceElement(all_categorys[0], rwkChoiceCategory(all_categorys[0]));
 
             String marque = selectionned[0];// récupère la marque
@@ -294,7 +295,7 @@ public class myfunctions {
             price = Double.parseDouble(selectionned[2]); // converti en double car string de base
 
             // coupure temporaire mettre 1 pour passer
-            //rwkTxtString("En attende de suite", true, false);
+            //rwkTxtStringV2("En attende de suite", true, false);
 
             String reference_marque = rwkReference(marque, 2); String reference_model = rwkReference(modele, 2);
             String reference_date = rwkDateTime("", "3", "", "HH:mm", "dd-MM-yyyy", false);
@@ -304,13 +305,13 @@ public class myfunctions {
 
             if(kilometrage > 200000){ // au dessous des 200 000 km
                 price = rwkOperatorV2("", false, reduce, "-%", "", price);
-                rwkTxtString("Réduction de 50% pour kilométrage au dessus des 200 000 KM", false, false);
+                rwkTxtStringV2("Réduction de 50% pour kilométrage au dessus des 200 000 KM", false, false);
             }else if(kilometrage > 100000){ // entre 100 000 et 200 000 km
                 price = rwkOperatorV2("", false, onsale, "-%", "", price);
-                rwkTxtString("Réduction de 25% pour kilométrage entre 100 000 et 200 000 KM", false, false);
+                rwkTxtStringV2("Réduction de 25% pour kilométrage entre 100 000 et 200 000 KM", false, false);
             }else if(!condition){ // occasion si condition = false
                 price = rwkOperatorV2("", false, 10, "-%", "", price);
-                rwkTxtString("Réduction de 10% appliqué pour occasion", false, false);
+                rwkTxtStringV2("Réduction de 10% appliqué pour occasion", false, false);
             }
 
             String[] adpt_txt = {
@@ -328,7 +329,7 @@ public class myfunctions {
         }
 
         if ("ALIMENTARY".equals(sector) || "ECOMMERCE".equals(sector)){
-            name                 = rwkTxtString("Veuillez mettre le nom de l'article", true, false);
+            name                 = rwkTxtStringV2("Veuillez mettre le nom de l'article", true, false);
 
             String[] adpt_txt = {
             /*01*/   "Type de produit :", 
@@ -361,7 +362,7 @@ public class myfunctions {
         }
 
         tableau.add(index, add_item);
-        rwkTxtString("Produit ajouté avec succès ! "+add_item, false, false);
+        rwkTxtStringV2("Produit ajouté avec succès ! "+add_item, false, false);
         return tableau;
     }
 
@@ -369,36 +370,36 @@ public class myfunctions {
         int index_delete = rwkTxtInt("Veuillez mettre l'ID que vous voulez delete");
         if(index_delete >= 0 && index_delete < tableau.size()) {
             tableau.remove(index_delete);
-            rwkTxtString(index_delete+" a été deleté !", false, false);
+            rwkTxtStringV2(index_delete+" a été deleté !", false, false);
             return tableau; // mets à jour le tableau en retournant
         }
         if (index_delete > tableau.size()) {
-            rwkTxtString("Index invalide !", false, false);
+            rwkTxtStringV2("Index invalide !", false, false);
             rwkRmvItemViaIndex(tableau, index);
         }
         return tableau;
     }
 
     public static ArrayList<String> rwkSrhItem(ArrayList<String> tableau, int index){
-        String search = rwkTxtString("Veuillez mettre le nom du produit que vous recherchez :", true, false);
+        String search = rwkTxtStringV2("Veuillez mettre le nom du produit que vous recherchez :", true, false);
         //System.out.print("TEST "+search);
 
         // if(tableau.contains(search)){
-        //     rwkTxtString(tableau.get(tableau.indexOf(search))+"", false, false);
+        //     rwkTxtStringV2(tableau.get(tableau.indexOf(search))+"", false, false);
         // }else{
-        //     rwkTxtString("Produit introuvable !", false, false);
+        //     rwkTxtStringV2("Produit introuvable !", false, false);
         //     return rwkSwitchCase(tableau, index);
         // }
         boolean found = false;
         for (String item : tableau) {
             if (item.contains(search)) { // Cherche "Nom : [recherche]" dans la chaîne
-                rwkTxtString("Produit trouvé :" + item, false, false);
+                rwkTxtStringV2("Produit trouvé :" + item, false, false);
                 found = true;
                 break;
             }
         }
         if(!found) {
-            rwkTxtString("Aucun produit trouvé pour : " + search, false, false);
+            rwkTxtStringV2("Aucun produit trouvé pour : " + search, false, false);
         }
         return tableau;
     }
@@ -410,8 +411,8 @@ public class myfunctions {
         ChronoUnit unit, int onsale, int reduce,
         String[][][] all_categorys, String[] details_txt
         ){
-        //String option = rwkTxtString("Voulez-vous ? (A) Ajouter un nouvel article | (B) Supprimer un article | (Y) Chercher un article | (W) Afficher la liste d'articles | (X) Quitter", true, true);
-        String option = rwkTxtString(details_txt[0], true, true);
+        //String option = rwkTxtStringV2("Voulez-vous ? (A) Ajouter un nouvel article | (B) Supprimer un article | (Y) Chercher un article | (W) Afficher la liste d'articles | (X) Quitter", true, true);
+        String option = rwkTxtStringV2(details_txt[0], true, true);
         switch(option){// voir pour faire des nouvelles functions assez indépendants pour utiliser en tout
             case "A": 
             if("ALIMENTARY".equals(sector) || "ECOMMERCE".equals(sector) || "DEALERSHIP".equals(sector)){
@@ -428,8 +429,8 @@ public class myfunctions {
             return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, all_categorys, details_txt);
             case "W": rwkLoopArraysList(tableau);
             return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, all_categorys, details_txt);
-            case "X": rwkTxtString("Merci au revoir ! ", false, false); break;
-            default: rwkTxtString("Veuillez répondre que par (A), (B), (Y) ou (X)", false, true); 
+            case "X": rwkTxtStringV2("Merci au revoir ! ", false, false); break;
+            default: rwkTxtStringV2("Veuillez répondre que par (A), (B), (Y) ou (X)", false, true); 
             return rwkSwitchCase(tableau, index, types, sector, duration, unit, onsale, reduce, all_categorys, details_txt); //relancement de sécurité
         }
         return tableau;
@@ -440,7 +441,7 @@ public class myfunctions {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
         //question pour avoir la date
-        String date_string = rwkTxtString(prompt +" (format JJ/MM/AAAA HH:MM)", true, false);
+        String date_string = rwkTxtStringV2(prompt +" (format JJ/MM/AAAA HH:MM)", true, false);
 
         //Transform le string en variable date mais en US pour travailler à la suite
         LocalDateTime date_time = LocalDateTime.parse(date_string, formatter);
@@ -458,7 +459,7 @@ public class myfunctions {
             switch(operator){
                 case "1": //add date and not time
                 formatter = DateTimeFormatter.ofPattern(date_txt);
-                String date_string = rwkTxtString(prompt +" (format "+date_txt+")", true, false);
+                String date_string = rwkTxtStringV2(prompt +" (format "+date_txt+")", true, false);
                 //checking format date
                 LocalDate.parse(date_string, formatter); // check si bien format date
                 result = date_string;
@@ -466,7 +467,7 @@ public class myfunctions {
 
                 case "2":  //add time and not date
                 formatter = DateTimeFormatter.ofPattern(time_txt);
-                String time_string = rwkTxtString(prompt +" (format "+time_txt+")", true, false);
+                String time_string = rwkTxtStringV2(prompt +" (format "+time_txt+")", true, false);
                 LocalTime.parse(time_string, formatter); // check si bien format time
                 result = time_string;
                 break;
@@ -520,21 +521,21 @@ public class myfunctions {
 
     public static void rwkLoopArraysList(ArrayList<String> tableau){
         if (tableau.isEmpty()) {
-            rwkTxtString("La liste est vide", false, false);
+            rwkTxtStringV2("La liste est vide", false, false);
         }else{
-            rwkTxtString("Voici la liste d'articles", false, false);
+            rwkTxtStringV2("Voici la liste d'articles", false, false);
             for(String nom:tableau){
-                rwkTxtString(nom, false, false);
+                rwkTxtStringV2(nom, false, false);
             }
         }
     }
 
     //public static String TrouverUnNoms(ArrayList<String> stagiaires, String rechercheNom){
     public static String TrouverUnNoms(ArrayList<String> stagiaires){
-        String rechercheNom = rwkTxtString("Rechercher :", true, false);
+        String rechercheNom = rwkTxtStringV2("Rechercher :", true, false);
 
         if(stagiaires.contains(rechercheNom)){
-            rwkTxtString(rechercheNom+" Existe dans la liste, à la position "+stagiaires.indexOf(rechercheNom), false, false);
+            rwkTxtStringV2(rechercheNom+" Existe dans la liste, à la position "+stagiaires.indexOf(rechercheNom), false, false);
             //return stagiaires;
             return rechercheNom+" Existe dans la liste, à la position "+stagiaires.indexOf(rechercheNom);
         }else{
@@ -560,26 +561,7 @@ public class myfunctions {
             }
         }
     }
-
-    public static String rwkTxtString(String prompt, boolean keyboard, boolean touppercase){ 
-        Scanner sc = new Scanner(System.in);
-        System.out.print(prompt+"\n");
-        if(keyboard){
-            if(touppercase){
-                //System.out.print(prompt+"test 01");
-                return sc.nextLine().toUpperCase(); //transform all maj
-                }else{
-                    //System.out.print(prompt+"test 02 ");
-                    return sc.next();
-                }
-            }else if(touppercase){
-                //System.out.print(prompt+"test 03 ");
-                return prompt.toUpperCase(); //return exclusive text all maj
-            }else{
-                //System.out.print(prompt+"test 04 ");
-            return prompt; //return exclusive text normalize
-        }
-    }
+    
     public static String rwkTxtStringV2(String prompt, boolean keyboard, boolean touppercase){ 
         Scanner sc = new Scanner(System.in);
         System.out.print(prompt+"\n");
@@ -595,7 +577,7 @@ public class myfunctions {
     public static boolean rwkTxtBoolean(String prompt, boolean convert){ 
         try{
             Scanner sc = new Scanner(System.in); 
-            rwkTxtString(prompt, false, true);
+            rwkTxtStringV2(prompt, false, true);
             boolean result;
             
             if(convert){
@@ -603,7 +585,7 @@ public class myfunctions {
                 switch(bool){
                     case "YES": case "TRUE": case "OUI": return true;
                     case "NO": case "FALSE": case "NON": return false;
-                    default: rwkTxtString("Veuillez répondre par YES/NO, TRUE/FALSE ou OUI/NON", false, true); 
+                    default: rwkTxtStringV2("Veuillez répondre par YES/NO, TRUE/FALSE ou OUI/NON", false, true); 
                     return rwkTxtBoolean(prompt, convert);
                 }
             //}else if(!convert){
@@ -620,7 +602,7 @@ public class myfunctions {
     public static int rwkTxtInt(String prompt){ 
         try{
             Scanner sc = new Scanner(System.in); 
-            rwkTxtString(prompt, false, false);
+            rwkTxtStringV2(prompt, false, false);
             return sc.nextInt();
         }catch (Exception e){
             TxtException(e, 0, "");
@@ -630,7 +612,7 @@ public class myfunctions {
     public static double rwkCalculator(String prompt, double result, boolean add, boolean pct){ 
         try{
             Scanner sc = new Scanner(System.in);
-            rwkTxtString(prompt, false, false);
+            rwkTxtStringV2(prompt, false, false);
             double clavier = sc.nextInt();
             if(add){
                 result += clavier;
@@ -649,7 +631,7 @@ public class myfunctions {
         try{
             Scanner sc = new Scanner(System.in);
             if(scanner){
-                rwkTxtString(prompt, false, false);
+                rwkTxtStringV2(prompt, false, false);
                 dft = sc.nextInt();
             }
             switch(operator){
@@ -663,12 +645,12 @@ public class myfunctions {
                 default: System.out.println("(op_error) revoir l'opérator"); break;
             }
             if(!notif.equals("")){
-                rwkTxtString(notif, false, false);
+                rwkTxtStringV2(notif, false, false);
             }
-            //rwkTxtString("CHECK RESULT RWKOPERATOR "+result, false, false);
+            //rwkTxtStringV2("CHECK RESULT RWKOPERATOR "+result, false, false);
             return result;
         }catch (Exception e){
-            rwkTxtString("Veuillez mettre que des chiffres, virgule autorisé !", false, false);
+            rwkTxtStringV2("Veuillez mettre que des chiffres, virgule autorisé !", false, false);
             return rwkOperatorV2(prompt, scanner, dft, operator, notif, result);
         }
     }
@@ -717,12 +699,12 @@ public class myfunctions {
     }
     public static Boolean rwkQuizerNv2(String query, boolean bool, String correct, String incorrect){
         Boolean result;
-        Boolean answer = rwkTxtBoolean(query+" (true/false)", false);
+        Boolean answer = rwkTxtBoolean(query+" (true/false)", true);
             if (answer == bool) {
-                rwkTxtString(correct, false, false);
+                rwkTxtStringV2(correct, false, false);
                 result = true;
             } else {
-                rwkTxtString(incorrect, false, false);
+                rwkTxtStringV2(incorrect, false, false);
                 result = false;
             }
         return result;
@@ -743,9 +725,9 @@ public class myfunctions {
             debit = rwkTxtInt("Combien voulez-vous retirer ?");
             if (solde >= debit) {
                 solde -= debit;
-                rwkTxtString("Votre nouveau solde est à "+ solde, false, false);
+                rwkTxtStringV2("Votre nouveau solde est à "+ solde, false, false);
             } else {
-                rwkTxtString("Opération refusée, fond insuffissant !", false, false);
+                rwkTxtStringV2("Opération refusée, fond insuffissant !", false, false);
                 rwkSolde(bool, solde);
             }
         }

@@ -45,7 +45,7 @@ public class exo_16 {
         boolean business = myfunctions.rwkTxtBoolean("Le passager veut-il une classe business (oui/non) ?", true);
         double price = myfunctions.rwkOperator("Le prix du vol : ", "=", 0);
         int seats = myfunctions.rwkTxtInt("Nombre de places disponibles : ");
-        myfunctions.rwkTxtString("CHECKING "+ seats, false, false);
+        myfunctions.rwkTxtStringV2("CHECKING "+ seats, false, false);
 
         //Réduction de 20% si le passager est mineur
         if (age < 18) {

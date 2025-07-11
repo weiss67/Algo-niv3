@@ -3,6 +3,6 @@ import methods.myfunctions;
 
 public class exo_12 {
     public static void main(String[] args) {
-        myfunctions.rwkTxtString("Votre prix après réduction : "+myfunctions.rwkCalculator("Votre réduction (en pourcentage %) ?", myfunctions.rwkTxtInt("Votre prix ?"), false, true)+" euros", false, false);   
+        myfunctions.rwkTxtStringV2("Votre prix après réduction : "+myfunctions.rwkCalculator("Votre réduction (en pourcentage %) ?", myfunctions.rwkTxtInt("Votre prix ?"), false, true)+" euros", false, false);   
     }
 }

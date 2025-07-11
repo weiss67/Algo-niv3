@@ -20,7 +20,7 @@ import methods.myfunctions;
 public class exo_11 {
     public static void main(String[] args) {
         int solde = 3000;
-        myfunctions.rwkTxtString("\nBonjour, votre solde est à "+ solde+" euros.", false, false);
+        myfunctions.rwkTxtStringV2("\nBonjour, votre solde est à "+ solde+" euros.", false, false);
         solde = myfunctions.rwkSolde(false, solde);
     }
 }
