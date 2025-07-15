@@ -2,7 +2,6 @@ package jalons;
 
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-
 import methods.myfunctions;
 
 public class MainJalonGreenDwm {

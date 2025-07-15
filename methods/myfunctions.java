@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
-import methods.Exceptioner;
-
 public class myfunctions {
 
     public static Object[] rwkSignUp(boolean identity, boolean age, boolean account){
@@ -183,14 +181,14 @@ public class myfunctions {
         return result;
     }
 
-    public static String[] rwkChoiceElement(String[][] all_categorys, String markChoiced) {
+    public static String[] rwkChoiceElement(String[][] all_categorys, String markChoiced, String[] details_txt) {
         String[] result = new String[3]; // 3 valeurs attendues voir pour mettre plus si il faut
 
-        System.out.println("\nModèles disponibles pour " + markChoiced + ":");
+        rwkTxtStringV2(String.format(details_txt[0], markChoiced), false, false);
         int modelIndex = 1;
         for (String[] vehicule : all_categorys) {
             if (vehicule[0].equals(markChoiced)) {
-                System.out.println(modelIndex + ". " + vehicule[1] + " (" + vehicule[2] + " euros)");
+                rwkTxtStringV2(String.format(details_txt[1], modelIndex, vehicule[1], vehicule[2]), false, false);
                 modelIndex++;
             }
         }
@@ -200,15 +198,49 @@ public class myfunctions {
         if (model[0].equals(markChoiced)) models.add(model);
 
         try{
-            int choiceModel = rwkTxtInt("Choisissez un modèle: ");
+            int choiceModel = rwkTxtInt(details_txt[2]);
             String[] selection = models.get(choiceModel - 1);
-            System.out.println("Selection: " + selection[1] + " (" + selection[2] + " euros)");
+            rwkTxtStringV2(String.format(details_txt[3], selection[1], selection[2]), false, false);
 
             result[0] = markChoiced; result[1] = selection[1]; result[2] = selection[2];
 
         } catch (Exception e) {
             Exceptioner.TxtException(e, models.size(), "");
-            rwkChoiceElement(all_categorys, markChoiced);
+            rwkChoiceElement(all_categorys, markChoiced, details_txt);
+        }        
+        return result;
+    }
+
+    public static String[] rwkChoiceElementv2(String[][] all_categorys, String markChoiced, String[] details_txt) {
+        String[] result = new String[3]; // 3 valeurs attendues voir pour mettre plus si il faut
+
+        //System.out.println("\nModèles disponibles pour " + markChoiced + ":");
+        rwkTxtStringV2(String.format(details_txt[0], markChoiced), false, false);
+        int modelIndex = 1;
+        for (String[] vehicule : all_categorys) {
+            if (vehicule[0].equals(markChoiced)) {
+                //System.out.println(modelIndex + ". " + vehicule[1] + " (" + vehicule[2] + " euros)");
+                rwkTxtStringV2(String.format(details_txt[1], modelIndex, vehicule[1], vehicule[2]), false, false);
+                modelIndex++;
+            }
+        }
+        // créer une liste pour pouvoir indexer tout en prenant que la catégorie selectionnée
+        List<String[]> models = new ArrayList<>();
+        for (String[] model : all_categorys)
+        if (model[0].equals(markChoiced)) models.add(model);
+
+        try{
+            //int choiceModel = rwkTxtInt(String.format(details_txt[2]));
+            int choiceModel = rwkTxtInt("Veuillez choisir le modèle");
+            String[] selection = models.get(choiceModel - 1);
+            //System.out.println("Selection: " + selection[1] + " (" + selection[2] + " euros)");
+            rwkTxtStringV2(String.format(details_txt[3], selection[1], selection[2]), false, false);
+
+            result[0] = markChoiced; result[1] = selection[1]; result[2] = selection[2];
+
+        } catch (Exception e) {
+            Exceptioner.TxtException(e, models.size(), "");
+            rwkChoiceElement(all_categorys, markChoiced, details_txt);
         }        
         return result;
     }
@@ -216,6 +248,9 @@ public class myfunctions {
     public static ArrayList<String> rwkAddItem(ArrayList<String> tableau, int index, String[] types, String sector, int duration, ChronoUnit unit, int onsale, int reduce, String[][][] all_categorys){
         
         String name = ""; String typeName = ""; String date_manufacturing = ""; String[] choix; double price = 0.0; String add_item = "";
+
+        String[] details_txt;
+
         if ("MEDICAL_OFFICE".equals(sector)){
 
             String[] rwktypestxt = {
@@ -248,8 +283,15 @@ public class myfunctions {
 
         if ("DEALERSHIP".equals(sector)){
 
+            details_txt = new String[] {
+            /*00*/   "Modèle pour la marque %s :", 
+            /*01*/   "%d | %s (%s euros)", 
+            /*02*/   "Veuillez choisir le modèle",
+            /*03*/   "Vous avez choisi le modèle : %s (%s euros)", 
+            };
+
             rwkTxtStringV2("Vous voulez ajouter une voiture, très bien.", false, false);
-            String[] selectionned = rwkChoiceElement(all_categorys[0], rwkChoiceCategory(all_categorys[0]));
+            String[] selectionned = rwkChoiceElement(all_categorys[0], rwkChoiceCategory(all_categorys[0]), details_txt);
 
             String marque = selectionned[0];// récupère la marque
             String modele = selectionned[1];// récupère le modèle
@@ -275,13 +317,14 @@ public class myfunctions {
                 rwkTxtStringV2("Réduction de 10% appliqué pour occasion", false, false);
             }
 
-            String[] adpt_txt = {
-            /*01*/   "Liste des couleurs :", 
-            /*02*/   "Quel est sa couleur : ", 
-            /*03*/   "Vous avez choisi le couleur %s, +%.2f euros", 
+            details_txt = new String[] {
+            /*00*/   "Liste des couleurs :", 
+            /*01*/   "%d | %s (%s euros)",
+            /*02*/   "Veuillez choisir la couleur",
+            /*03*/   "Vous avez choisi le couleur %s (%s euros)", 
             };
 
-            String[] colorChoiced = rwkChoiceElement(all_categorys[1], "couleur métalisée");
+            String[] colorChoiced = rwkChoiceElement(all_categorys[1], "couleur métalisée", details_txt);
             String type_paint = selectionned[0];// récupère le type de peinture
             String color_choiced = selectionned[1];// récupère la couleur de peinture
             price += Double.parseDouble(selectionned[2]); // converti en double car string de base
