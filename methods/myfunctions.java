@@ -211,40 +211,6 @@ public class myfunctions {
         return result;
     }
 
-    public static String[] rwkChoiceElementv2(String[][] all_categorys, String markChoiced, String[] details_txt) {
-        String[] result = new String[3]; // 3 valeurs attendues voir pour mettre plus si il faut
-
-        //System.out.println("\nModèles disponibles pour " + markChoiced + ":");
-        rwkTxtStringV2(String.format(details_txt[0], markChoiced), false, false);
-        int modelIndex = 1;
-        for (String[] vehicule : all_categorys) {
-            if (vehicule[0].equals(markChoiced)) {
-                //System.out.println(modelIndex + ". " + vehicule[1] + " (" + vehicule[2] + " euros)");
-                rwkTxtStringV2(String.format(details_txt[1], modelIndex, vehicule[1], vehicule[2]), false, false);
-                modelIndex++;
-            }
-        }
-        // créer une liste pour pouvoir indexer tout en prenant que la catégorie selectionnée
-        List<String[]> models = new ArrayList<>();
-        for (String[] model : all_categorys)
-        if (model[0].equals(markChoiced)) models.add(model);
-
-        try{
-            //int choiceModel = rwkTxtInt(String.format(details_txt[2]));
-            int choiceModel = rwkTxtInt("Veuillez choisir le modèle");
-            String[] selection = models.get(choiceModel - 1);
-            //System.out.println("Selection: " + selection[1] + " (" + selection[2] + " euros)");
-            rwkTxtStringV2(String.format(details_txt[3], selection[1], selection[2]), false, false);
-
-            result[0] = markChoiced; result[1] = selection[1]; result[2] = selection[2];
-
-        } catch (Exception e) {
-            Exceptioner.TxtException(e, models.size(), "");
-            rwkChoiceElement(all_categorys, markChoiced, details_txt);
-        }        
-        return result;
-    }
-
     public static ArrayList<String> rwkAddItem(ArrayList<String> tableau, int index, String[] types, String sector, int duration, ChronoUnit unit, int onsale, int reduce, String[][][] all_categorys){
         
         String name = ""; String typeName = ""; String date_manufacturing = ""; String[] choix; double price = 0.0; String add_item = "";
@@ -321,7 +287,7 @@ public class myfunctions {
             /*00*/   "Liste des couleurs :", 
             /*01*/   "%d | %s (%s euros)",
             /*02*/   "Veuillez choisir la couleur",
-            /*03*/   "Vous avez choisi le couleur %s (%s euros)", 
+            /*03*/   "Vous avez choisi couleur %s (%s euros)", 
             };
 
             String[] colorChoiced = rwkChoiceElement(all_categorys[1], "couleur métalisée", details_txt);
